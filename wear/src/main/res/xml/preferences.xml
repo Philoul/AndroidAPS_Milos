@@ -238,7 +238,7 @@
         android:title="@string/pref_action_bg" />
 
     <ListPreference
-        android:defaultValue="menu"
+        android:defaultValue="none"
         android:entries="@array/watchface_action"
         android:entryValues="@array/watchface_action_values"
         android:key="action_iob"
@@ -246,7 +246,7 @@
         android:title="@string/pref_action_iob" />
 
     <ListPreference
-        android:defaultValue="menu"
+        android:defaultValue="none"
         android:entries="@array/watchface_action"
         android:entryValues="@array/watchface_action_values"
         android:key="action_cob"
@@ -254,7 +254,7 @@
         android:title="@string/pref_action_cob" />
 
     <ListPreference
-        android:defaultValue="menu"
+        android:defaultValue="none"
         android:entries="@array/watchface_action"
         android:entryValues="@array/watchface_action_values"
         android:key="action_time"

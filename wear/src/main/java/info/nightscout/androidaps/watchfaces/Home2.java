@@ -1,6 +1,5 @@
 package info.nightscout.androidaps.watchfaces;
 
-import android.content.Intent;
 import android.graphics.Color;
 import androidx.annotation.ColorInt;
 import androidx.core.content.ContextCompat;
@@ -10,7 +9,6 @@ import android.view.LayoutInflater;
 import com.ustwo.clockwise.common.WatchMode;
 
 import info.nightscout.androidaps.R;
-import info.nightscout.androidaps.interaction.menus.MainMenuActivity;
 
 public class Home2 extends BaseWatchFace {
 
@@ -81,7 +79,8 @@ public class Home2 extends BaseWatchFace {
             }
             watch_timeTapTime = eventTime;
 
-        } else {                                            // on all background (outside BG, COB, IOB and Hour zone) access to main menu
+        } else if (tapType == TAP_TYPE_TAP&&
+                y < chart.getTop()){                                           // on all background (outside BG, COB, IOB and Hour zone) access to main menu
             if (eventTime - backgroundTapTime < 800){
                 DoAction(WatchfaceAction.MENU);
             }

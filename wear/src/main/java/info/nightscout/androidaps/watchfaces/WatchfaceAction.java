@@ -10,6 +10,7 @@ public enum WatchfaceAction {
     PUMP,
     TDD,
     LOOP,
-    STATUS
+    STATUS,
+    NONE
 }
 
