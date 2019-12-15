@@ -37,7 +37,14 @@ import java.util.Date;
 import info.nightscout.androidaps.complications.BaseComplicationProviderService;
 import info.nightscout.androidaps.data.RawDisplayData;
 import info.nightscout.androidaps.data.ListenerService;
+import info.nightscout.androidaps.interaction.actions.BolusActivity;
+import info.nightscout.androidaps.interaction.actions.ECarbActivity;
+import info.nightscout.androidaps.interaction.actions.TempTargetActivity;
+import info.nightscout.androidaps.interaction.actions.WizardActivity;
+import info.nightscout.androidaps.interaction.menus.MainMenuActivity;
+import info.nightscout.androidaps.interaction.menus.StatusMenuActivity;
 import info.nightscout.androidaps.R;
+import info.nightscout.androidaps.aaps;
 import lecho.lib.hellocharts.view.LineChartView;
 
 /**
@@ -69,7 +76,6 @@ public  abstract class BaseWatchFace extends WatchFace implements SharedPreferen
     public int pointSize = 2;
     public BgGraphBuilder bgGraphBuilder;
     public LineChartView chart;
-
 
     public RawDisplayData rawData = new RawDisplayData();
 
@@ -555,6 +561,83 @@ public  abstract class BaseWatchFace extends WatchFace implements SharedPreferen
             chart.setLineChartData(bgGraphBuilder.lineData());
             chart.setViewportCalculationEnabled(true);
             chart.setMaximumViewport(chart.getMaximumViewport());
+        }
+    }
+
+    public void DoAction(WatchfaceAction action) {
+        Intent intent = null;
+
+        switch (action) {
+            case TEMPT:
+                intent = new Intent(this, TempTargetActivity.class);
+                intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                startActivity(intent);
+                break;
+            case WIZARD:
+                intent = new Intent(aaps.getAppContext(), WizardActivity.class);
+                intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                startActivity(intent);
+                break;
+            case BOLUS:
+                intent = new Intent(aaps.getAppContext(), BolusActivity.class);
+                intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                startActivity(intent);
+                break;
+            case ECARB:
+                intent = new Intent(aaps.getAppContext(), ECarbActivity.class);
+                intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                startActivity(intent);
+                break;
+            case STATUS:
+                intent = new Intent(aaps.getAppContext(), StatusMenuActivity.class);
+                intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                startActivity(intent);
+                break;
+            case CPP:
+                ListenerService.initiateAction(this, "opencpp");
+                break;
+            case TDD:
+                ListenerService.initiateAction(this, "tddstats");
+                break;
+            case LOOP:
+                ListenerService.initiateAction(this, "status loop");
+                break;
+            case PUMP:
+                ListenerService.initiateAction(this, "status pump");
+                break;
+            case MENU:
+                intent = new Intent(aaps.getAppContext(), MainMenuActivity.class);
+                intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                startActivity(intent);
+                break;
+            default:
+                // do nothing
+        }
+    }
+
+    public WatchfaceAction remapActionWithUserPreferences(String userPrefAction) {
+        switch (userPrefAction) {
+            case "tempt":
+                return WatchfaceAction.TEMPT;
+            case "wizard":
+                return WatchfaceAction.WIZARD;
+            case "bolus":
+                return WatchfaceAction.BOLUS;
+            case "ecarb":
+                return WatchfaceAction.ECARB;
+            case "status":
+                return WatchfaceAction.STATUS;
+            case "pump":
+                return WatchfaceAction.PUMP;
+            case "loop":
+                return WatchfaceAction.LOOP;
+            case "cpp":
+                return WatchfaceAction.CPP;
+            case "tdd":
+                return WatchfaceAction.TDD;
+            case "menu":
+            default:
+                return WatchfaceAction.MENU;
         }
     }
 

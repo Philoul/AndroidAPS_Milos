@@ -78,6 +78,11 @@
     <string name="menu_default">Default</string>
     <string name="menu_menu">Menu</string>
 
+    <string name="pref_action_bg" comment="In menu, set action when double tap on BG value">BG Action</string>
+    <string name="pref_action_iob" comment="In menu, set action when double tap on IOB value">IOB Action</string>
+    <string name="pref_action_cob" comment="In menu, set action when double tap on COB value">COB Action</string>
+    <string name="pref_action_time" comment="In menu, set action when double tap on hour value">Hour Action</string>
+
     <string name="action_duration">duration</string>
     <string name="action_target" comment="In temp target menu, single target value">target</string>
     <string name="action_low" comment="In temp target menu, lower value from range">low</string>
