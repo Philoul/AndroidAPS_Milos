@@ -75,6 +75,7 @@ public  abstract class BaseWatchFace extends WatchFace implements SharedPreferen
     public boolean layoutSet = false;
     public boolean bIsRound = false;
     public boolean dividerMatchesBg = false;
+    public boolean ResizePointSize = false;
     public int pointSize = 2;
     public BgGraphBuilder bgGraphBuilder;
     public LineChartView chart;
@@ -572,13 +573,16 @@ public  abstract class BaseWatchFace extends WatchFace implements SharedPreferen
                 DoAction(remapActionWithUserPreferences(sharedPrefs.getString("action_bg", "menu")));
                 break;
             case COB:
-                DoAction(remapActionWithUserPreferences(sharedPrefs.getString("action_cob", "menu")));
+                DoAction(remapActionWithUserPreferences(sharedPrefs.getString("action_cob", "none")));
                 break;
             case IOB:
-                DoAction(remapActionWithUserPreferences(sharedPrefs.getString("action_iob", "menu")));
+                DoAction(remapActionWithUserPreferences(sharedPrefs.getString("action_iob", "none")));
                 break;
             case TIME:
-                DoAction(remapActionWithUserPreferences(sharedPrefs.getString("action_time", "menu")));
+                DoAction(remapActionWithUserPreferences(sharedPrefs.getString("action_time", "none")));
+                break;
+            case DELTA:
+                DoAction(remapActionWithUserPreferences(sharedPrefs.getString("action_delta", "none")));
                 break;
             case BACKGROUND:
                 DoAction(WatchfaceAction.MENU);
@@ -586,6 +590,14 @@ public  abstract class BaseWatchFace extends WatchFace implements SharedPreferen
             case CHART:
                 int timeframe = Integer.parseInt(sharedPrefs.getString("chart_timeframe", "3"));
                 timeframe = (timeframe%5) + 1;
+                if(ResizePointSize) {
+                    if (timeframe < 3) {
+                        pointSize = 2;
+                    } else {
+                        pointSize = 1;
+                    }
+                }
+                setupCharts();
                 sharedPrefs.edit().putString("chart_timeframe", "" + timeframe).commit();
                 break;
             default:

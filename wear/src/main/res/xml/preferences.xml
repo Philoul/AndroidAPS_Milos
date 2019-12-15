@@ -262,6 +262,14 @@
         android:title="@string/pref_action_time" />
 
     <ListPreference
+        android:defaultValue="none"
+        android:entries="@array/watchface_action"
+        android:entryValues="@array/watchface_action_values"
+        android:key="action_delta"
+        android:summary="What action after double tap on delta"
+        android:title="@string/pref_action_delta" />
+
+    <ListPreference
         android:defaultValue="default"
         android:entries="@array/complication_tap_action"
         android:entryValues="@array/complication_tap_action_values"

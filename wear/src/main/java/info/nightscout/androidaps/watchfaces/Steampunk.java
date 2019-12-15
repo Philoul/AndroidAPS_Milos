@@ -1,6 +1,5 @@
 package info.nightscout.androidaps.watchfaces;
 
-import android.content.Intent;
 import androidx.core.content.ContextCompat;
 import android.support.wearable.watchface.WatchFaceStyle;
 import android.view.LayoutInflater;
@@ -9,16 +8,15 @@ import android.view.animation.LinearInterpolator;
 import android.view.animation.RotateAnimation;
 
 import info.nightscout.androidaps.R;
-import info.nightscout.androidaps.interaction.menus.MainMenuActivity;
 import info.nightscout.androidaps.interaction.utils.SafeParse;
 /**
  * Created by andrew-warrington on 01/12/2017.
+ * Update by philoul on 15 dec 2019 (onTapCommand)
  */
 
 public class Steampunk extends BaseWatchFace {
-
-    private long chartTapTime = 0;
-    private long mainMenuTapTime = 0;
+    private long TapTime = 0;
+    private WatchfaceZone LastZone = WatchfaceZone.NONE;
     private float lastEndDegrees = 0f;
     private float deltaRotationAngle = 0f;
 
@@ -29,34 +27,52 @@ public class Steampunk extends BaseWatchFace {
         LayoutInflater inflater = (LayoutInflater) getSystemService(LAYOUT_INFLATER_SERVICE);
         layoutView = inflater.inflate(R.layout.activity_steampunk, null);
         performViewSetup();
+        ResizePointSize = true;
     }
 
     @Override
     protected void onTapCommand(int tapType, int x, int y, long eventTime) {
+        WatchfaceZone TapZone = WatchfaceZone.NONE;
 
         if (tapType == TAP_TYPE_TAP&&
                 x >= mChartTap.getLeft() &&
                 x <= mChartTap.getRight()&&
                 y >= mChartTap.getTop() &&
-                y <= mChartTap.getBottom()){
-            if (eventTime - chartTapTime < 800){
-                changeChartTimeframe();
-            }
-            chartTapTime = eventTime;
-
+                y <= mChartTap.getBottom()){                                // if double tap in chart
+            TapZone = WatchfaceZone.CHART;
         } else if (tapType == TAP_TYPE_TAP&&
-                x >= mMainMenuTap.getLeft() &&
-                x <= mMainMenuTap.getRight()&&
-                y >= mMainMenuTap.getTop() &&
-                y <= mMainMenuTap.getBottom()){
-            if (eventTime - mainMenuTapTime < 800){
-                Intent intent = new Intent(this, MainMenuActivity.class);
-                intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                startActivity(intent);
+                x >= 2*mLinearLayout.getWidth()/3 &&
+                y >= mLinearLayout.getHeight()/3 &&
+                y <= 2*mLinearLayout.getHeight()/3) {                     // if double tap on BG value
+            TapZone = WatchfaceZone.BG;
+        } else if (tapType == TAP_TYPE_TAP&&
+                x <= mLinearLayout.getWidth()/3 &&
+                y >= mLinearLayout.getHeight()/3 &&
+                y <= 2*mLinearLayout.getHeight()/3) {                     // if double tap on delta value
+            TapZone = WatchfaceZone.DELTA;
+        } else if (tapType == TAP_TYPE_TAP &&
+                x >= mLinearLayout.getWidth()/3 &&
+                x <= 2*mLinearLayout.getWidth()/3 &&
+                y <= mLinearLayout.getHeight()/3) {                     // if double tap on iob value
+            TapZone = WatchfaceZone.IOB;
+        } else if (tapType == TAP_TYPE_TAP&&
+                x >= mLinearLayout.getWidth()/3 &&
+                x <= 2*mLinearLayout.getWidth()/3 &&
+                y >= mLinearLayout.getHeight()/3 &&
+                y <= 2*mLinearLayout.getHeight()/3) {                     // if double tap on time value
+            TapZone = WatchfaceZone.TIME;
+        } else if (tapType == TAP_TYPE_TAP){                              // on all background (outside BG, COB, IOB and Hour zone) access to main menu
+            TapZone = WatchfaceZone.BACKGROUND;
+        }
+        if (tapType == TAP_TYPE_TAP) {
+            if (eventTime - TapTime < 800 && LastZone == TapZone) {
+                DoTapAction(TapZone);
             }
-            mainMenuTapTime = eventTime;
+            TapTime = eventTime;
+            LastZone = TapZone;
         }
     }
+
 
     @Override
     protected WatchFaceStyle getWatchFaceStyle() {
@@ -238,15 +254,4 @@ public class Steampunk extends BaseWatchFace {
         }
     }
 
-    private void changeChartTimeframe() {
-        int timeframe = Integer.parseInt(sharedPrefs.getString("chart_timeframe", "3"));
-        timeframe = (timeframe%5) + 1;
-        if (timeframe < 3) {
-            pointSize = 2;
-        } else {
-            pointSize = 1;
-        }
-        setupCharts();
-        sharedPrefs.edit().putString("chart_timeframe", "" + timeframe).commit();
-    }
 }

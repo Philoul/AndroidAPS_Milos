@@ -25,7 +25,7 @@ public class Home2 extends BaseWatchFace {
     protected void onTapCommand(int tapType, int x, int y, long eventTime) {
         WatchfaceZone TapZone = WatchfaceZone.NONE;
         int extra = mSgv!=null?(mSgv.getRight() - mSgv.getLeft())/2:0;  // extra zone for BG
-        boolean doubleTap = false;
+
         if (tapType == TAP_TYPE_TAP&&
                 x >=chart.getLeft() &&
                 x <= chart.getRight()&&
@@ -41,16 +41,16 @@ public class Home2 extends BaseWatchFace {
         } else if (tapType == TAP_TYPE_TAP&&
                 x <= mLinearLayout2.getWidth()/3 &&
                 y >= mLinearLayout2.getTop() &&
-                y <= mLinearLayout2.getBottom()) {                     // if double tap on cob value   remapActionWithUserPreferences(sharedPrefs.getString("action_cob", "none"))
+                y <= mLinearLayout2.getBottom()) {                     // if double tap on cob value
             TapZone = WatchfaceZone.COB;
         } else if (tapType == TAP_TYPE_TAP &&
                 x >= 2 * mLinearLayout2.getWidth()/3 &&
                 y >= mLinearLayout2.getTop() &&
-                y <= mLinearLayout2.getBottom()) {                     // if double tap on iob value  remapActionWithUserPreferences(sharedPrefs.getString("action_iob", "none"))
+                y <= mLinearLayout2.getBottom()) {                     // if double tap on iob value
             TapZone = WatchfaceZone.IOB;
         } else if (tapType == TAP_TYPE_TAP&&
                 y >= mLinearLayout2.getTop() &&
-                y <= mLinearLayout2.getBottom()) {                     // if double tap on time value   remapActionWithUserPreferences(sharedPrefs.getString("action_time", "none")
+                y <= mLinearLayout2.getBottom()) {                     // if double tap on time value
             TapZone = WatchfaceZone.TIME;
         } else if (tapType == TAP_TYPE_TAP&&
                 y < chart.getTop()){                                           // on all background (outside BG, COB, IOB and Hour zone) access to main menu

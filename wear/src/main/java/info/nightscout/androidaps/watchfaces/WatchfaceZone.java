@@ -6,6 +6,7 @@ public enum WatchfaceZone {
     COB,
     CHART,
     TIME,
+    DELTA,
     BACKGROUND,
     NONE
 }
