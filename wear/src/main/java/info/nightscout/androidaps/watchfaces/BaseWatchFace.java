@@ -46,11 +46,13 @@ import info.nightscout.androidaps.interaction.menus.StatusMenuActivity;
 import info.nightscout.androidaps.R;
 import info.nightscout.androidaps.aaps;
 import lecho.lib.hellocharts.view.LineChartView;
+import info.nightscout.androidaps.watchfaces.WatchfaceZone;
 
 /**
  * Created by emmablack on 12/29/14.
  * Updated by andrew-warrington on 02-Jan-2018.
  * Refactored by dlvoy on 2019-11-2019
+ * Updated by philoul on 15-dec-2019
  */
 
 public  abstract class BaseWatchFace extends WatchFace implements SharedPreferences.OnSharedPreferenceChangeListener {
@@ -564,6 +566,35 @@ public  abstract class BaseWatchFace extends WatchFace implements SharedPreferen
         }
     }
 
+    public void DoTapAction(WatchfaceZone zone) {
+        switch (zone) {
+            case BG:
+                DoAction(remapActionWithUserPreferences(sharedPrefs.getString("action_bg", "menu")));
+                break;
+            case COB:
+                DoAction(remapActionWithUserPreferences(sharedPrefs.getString("action_cob", "menu")));
+                break;
+            case IOB:
+                DoAction(remapActionWithUserPreferences(sharedPrefs.getString("action_iob", "menu")));
+                break;
+            case TIME:
+                DoAction(remapActionWithUserPreferences(sharedPrefs.getString("action_time", "menu")));
+                break;
+            case BACKGROUND:
+                DoAction(WatchfaceAction.MENU);
+                break;
+            case CHART:
+                int timeframe = Integer.parseInt(sharedPrefs.getString("chart_timeframe", "3"));
+                timeframe = (timeframe%5) + 1;
+                sharedPrefs.edit().putString("chart_timeframe", "" + timeframe).commit();
+                break;
+            default:
+                // no action
+        }
+    }
+
+
+
     public void DoAction(WatchfaceAction action) {
         Intent intent = null;
 
@@ -610,6 +641,7 @@ public  abstract class BaseWatchFace extends WatchFace implements SharedPreferen
                 intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                 startActivity(intent);
                 break;
+            case NONE:
             default:
                 // do nothing
         }
@@ -635,6 +667,8 @@ public  abstract class BaseWatchFace extends WatchFace implements SharedPreferen
                 return WatchfaceAction.CPP;
             case "tdd":
                 return WatchfaceAction.TDD;
+            case "none":
+                return WatchfaceAction.NONE;
             case "menu":
             default:
                 return WatchfaceAction.MENU;

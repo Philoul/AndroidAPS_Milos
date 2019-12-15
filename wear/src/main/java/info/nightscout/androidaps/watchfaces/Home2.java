@@ -5,19 +5,13 @@ import androidx.annotation.ColorInt;
 import androidx.core.content.ContextCompat;
 import android.support.wearable.watchface.WatchFaceStyle;
 import android.view.LayoutInflater;
-
 import com.ustwo.clockwise.common.WatchMode;
 
 import info.nightscout.androidaps.R;
 
 public class Home2 extends BaseWatchFace {
-
-    private long chartTapTime = 0;
-    private long sgvTapTime = 0;
-    private long watch_timeTapTime = 0;
-    private long cobTapTime = 0;
-    private long iobTapTime = 0;
-    private long backgroundTapTime = 0;
+    private long TapTime = 0;
+    private WatchfaceZone LastZone = WatchfaceZone.NONE;
 
     @Override
     public void onCreate() {
@@ -29,72 +23,48 @@ public class Home2 extends BaseWatchFace {
 
     @Override
     protected void onTapCommand(int tapType, int x, int y, long eventTime) {
-
+        WatchfaceZone TapZone = WatchfaceZone.NONE;
         int extra = mSgv!=null?(mSgv.getRight() - mSgv.getLeft())/2:0;  // extra zone for BG
-
+        boolean doubleTap = false;
         if (tapType == TAP_TYPE_TAP&&
                 x >=chart.getLeft() &&
                 x <= chart.getRight()&&
                 y >= chart.getTop() &&
                 y <= chart.getBottom()){                     // if double tap in chart
-            if (eventTime - chartTapTime < 800){
-                changeChartTimeframe();
-            }
-            chartTapTime = eventTime;
-
-
+            TapZone = WatchfaceZone.CHART;
         } else if (tapType == TAP_TYPE_TAP&&
                 x + extra >=mSgv.getLeft() &&
                 x - extra <= mSgv.getRight()&&
                 y >= mSgv.getTop() &&
                 y <= mSgv.getBottom()) {                     // if double tap on BG value
-            if (eventTime - sgvTapTime < 800) {
-                DoAction(remapActionWithUserPreferences(sharedPrefs.getString("action_bg", "menu")));
-            }
-            sgvTapTime = eventTime;
-
+            TapZone = WatchfaceZone.BG;
         } else if (tapType == TAP_TYPE_TAP&&
                 x <= mLinearLayout2.getWidth()/3 &&
                 y >= mLinearLayout2.getTop() &&
                 y <= mLinearLayout2.getBottom()) {                     // if double tap on cob value   remapActionWithUserPreferences(sharedPrefs.getString("action_cob", "none"))
-            if (eventTime - cobTapTime < 800) {
-                DoAction(remapActionWithUserPreferences(sharedPrefs.getString("action_cob", "menu")));
-            }
-            cobTapTime = eventTime;
-
+            TapZone = WatchfaceZone.COB;
         } else if (tapType == TAP_TYPE_TAP &&
                 x >= 2 * mLinearLayout2.getWidth()/3 &&
                 y >= mLinearLayout2.getTop() &&
                 y <= mLinearLayout2.getBottom()) {                     // if double tap on iob value  remapActionWithUserPreferences(sharedPrefs.getString("action_iob", "none"))
-            if (eventTime - iobTapTime < 800) {
-                DoAction(remapActionWithUserPreferences(sharedPrefs.getString("action_iob", "menu")));
-            }
-            iobTapTime = eventTime;
-
+            TapZone = WatchfaceZone.IOB;
         } else if (tapType == TAP_TYPE_TAP&&
                 y >= mLinearLayout2.getTop() &&
-                y <= mLinearLayout2.getBottom()) {                     // if double tap on time value   remapActionWithUserPreferences(sharedPrefs.getString("action_time", "none"))
-            if (eventTime - watch_timeTapTime < 800){
-                DoAction(remapActionWithUserPreferences(sharedPrefs.getString("action_time", "menu")));
-            }
-            watch_timeTapTime = eventTime;
-
+                y <= mLinearLayout2.getBottom()) {                     // if double tap on time value   remapActionWithUserPreferences(sharedPrefs.getString("action_time", "none")
+            TapZone = WatchfaceZone.TIME;
         } else if (tapType == TAP_TYPE_TAP&&
                 y < chart.getTop()){                                           // on all background (outside BG, COB, IOB and Hour zone) access to main menu
-            if (eventTime - backgroundTapTime < 800){
-                DoAction(WatchfaceAction.MENU);
+            TapZone = WatchfaceZone.BACKGROUND;
+        }
+        if (tapType == TAP_TYPE_TAP) {
+            if (eventTime - TapTime < 800 && LastZone == TapZone) {
+                DoTapAction(TapZone);
             }
-            backgroundTapTime = eventTime;
+            TapTime = eventTime;
+            LastZone = TapZone;
         }
     }
 
-
-
-    private void changeChartTimeframe() {
-        int timeframe = Integer.parseInt(sharedPrefs.getString("chart_timeframe", "3"));
-        timeframe = (timeframe%5) + 1;
-        sharedPrefs.edit().putString("chart_timeframe", "" + timeframe).commit();
-    }
 
     @Override
     protected WatchFaceStyle getWatchFaceStyle(){
