@@ -8,5 +8,10 @@ public enum WatchfaceZone {
     TIME,
     DELTA,
     BACKGROUND,
+    TOP,
+    DOWN,
+    CENTER,
+    LEFT,
+    RIGHT,
     NONE
 }

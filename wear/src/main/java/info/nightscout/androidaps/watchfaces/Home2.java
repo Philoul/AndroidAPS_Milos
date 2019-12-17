@@ -23,40 +23,58 @@ public class Home2 extends BaseWatchFace {
 
     @Override
     protected void onTapCommand(int tapType, int x, int y, long eventTime) {
-        WatchfaceZone TapZone = WatchfaceZone.NONE;
-        int extra = mSgv!=null?(mSgv.getRight() - mSgv.getLeft())/2:0;  // extra zone for BG
 
-        if (tapType == TAP_TYPE_TAP&&
-                x >=chart.getLeft() &&
-                x <= chart.getRight()&&
-                y >= chart.getTop() &&
-                y <= chart.getBottom()){                     // if double tap in chart
-            TapZone = WatchfaceZone.CHART;
-        } else if (tapType == TAP_TYPE_TAP&&
-                x + extra >=mSgv.getLeft() &&
-                x - extra <= mSgv.getRight()&&
-                y >= mSgv.getTop() &&
-                y <= mSgv.getBottom()) {                     // if double tap on BG value
-            TapZone = WatchfaceZone.BG;
-        } else if (tapType == TAP_TYPE_TAP&&
-                x <= mLinearLayout2.getWidth()/3 &&
-                y >= mLinearLayout2.getTop() &&
-                y <= mLinearLayout2.getBottom()) {                     // if double tap on cob value
-            TapZone = WatchfaceZone.COB;
-        } else if (tapType == TAP_TYPE_TAP &&
-                x >= 2 * mLinearLayout2.getWidth()/3 &&
-                y >= mLinearLayout2.getTop() &&
-                y <= mLinearLayout2.getBottom()) {                     // if double tap on iob value
-            TapZone = WatchfaceZone.IOB;
-        } else if (tapType == TAP_TYPE_TAP&&
-                y >= mLinearLayout2.getTop() &&
-                y <= mLinearLayout2.getBottom()) {                     // if double tap on time value
-            TapZone = WatchfaceZone.TIME;
-        } else if (tapType == TAP_TYPE_TAP&&
-                y < chart.getTop()){                                           // on all background (outside BG, COB, IOB and Hour zone) access to main menu
-            TapZone = WatchfaceZone.BACKGROUND;
-        }
         if (tapType == TAP_TYPE_TAP) {
+            WatchfaceZone TapZone = WatchfaceZone.NONE;
+ //           int extra = mSgv != null ? (mSgv.getRight() - mSgv.getLeft()) / 2 : 0;  // extra zone for BG
+            int xlow = mRelativeLayout.getWidth()/3;
+            int ylow = chart.getTop()/2;
+
+            if (x >= chart.getLeft() &&
+                    x <= chart.getRight() &&
+                    y >= chart.getTop() &&
+                    y <= chart.getBottom()) {                       // if double tap in chart
+                TapZone = WatchfaceZone.CHART;
+            } else if (x >= xlow &&
+                    x  <= 2*xlow &&
+                    y <= ylow) {                                    // if double tap on TOP
+                TapZone = WatchfaceZone.TOP;
+            } else if (x <= xlow &&
+                    y >= ylow) {                                    // if double tap on LEFT
+                TapZone = WatchfaceZone.LEFT;
+            } else if (x >= 2*xlow &&
+                    y >= ylow) {                                    // if double tap on RIGHT
+                TapZone = WatchfaceZone.RIGHT;
+            } else if (x >= xlow &&
+                    x  <= 2*xlow &&
+                    y >= ylow) {                                    // if double tap on CENTER
+                TapZone = WatchfaceZone.CENTER;
+            } else {                                                // on all background (outside chart and Top, Down, left, right and center) access to main menu
+                TapZone = WatchfaceZone.BACKGROUND;
+            }
+
+/*   First version of code with action according to BG, COB, IOB, TIME and DELTA
+            } else if (x + extra >= mSgv.getLeft() &&
+                    x - extra <= mSgv.getRight() &&
+                    y >= mSgv.getTop() &&
+                    y <= mSgv.getBottom()) {                     // if double tap on BG value
+                TapZone = WatchfaceZone.BG;
+            } else if (x <= mLinearLayout2.getWidth() / 3 &&
+                    y >= mLinearLayout2.getTop() &&
+                    y <= mLinearLayout2.getBottom()) {                     // if double tap on cob value
+                TapZone = WatchfaceZone.COB;
+            } else if (x >= 2 * mLinearLayout2.getWidth() / 3 &&
+                    y >= mLinearLayout2.getTop() &&
+                    y <= mLinearLayout2.getBottom()) {                     // if double tap on iob value
+                TapZone = WatchfaceZone.IOB;
+            } else if (y >= mLinearLayout2.getTop() &&
+                    y <= mLinearLayout2.getBottom()) {                     // if double tap on time value
+                TapZone = WatchfaceZone.TIME;
+            } else {                                           // on all background (outside BG, COB, IOB and Hour zone) access to main menu
+                TapZone = WatchfaceZone.BACKGROUND;
+            }
+
+ */
             if (eventTime - TapTime < 800 && LastZone == TapZone) {
                 DoTapAction(TapZone);
             }

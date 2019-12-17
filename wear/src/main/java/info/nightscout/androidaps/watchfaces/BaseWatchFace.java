@@ -587,6 +587,21 @@ public  abstract class BaseWatchFace extends WatchFace implements SharedPreferen
             case BACKGROUND:
                 DoAction(WatchfaceAction.MENU);
                 break;
+            case TOP:
+                DoAction(remapActionWithUserPreferences(sharedPrefs.getString("action_top", "none")));
+                break;
+            case DOWN:
+                DoAction(remapActionWithUserPreferences(sharedPrefs.getString("action_down", "none")));
+                break;
+            case LEFT:
+                DoAction(remapActionWithUserPreferences(sharedPrefs.getString("action_left", "none")));
+                break;
+            case RIGHT:
+                DoAction(remapActionWithUserPreferences(sharedPrefs.getString("action_right", "none")));
+                break;
+            case CENTER:
+                DoAction(remapActionWithUserPreferences(sharedPrefs.getString("action_center", "none")));
+                break;
             case CHART:
                 int timeframe = Integer.parseInt(sharedPrefs.getString("chart_timeframe", "3"));
                 timeframe = (timeframe%5) + 1;
