@@ -754,21 +754,6 @@ public class CircleWatchface extends WatchFace implements SharedPreferences.OnSh
 
     private void DoTapAction(WatchfaceZone zone) {
         switch (zone) {
-            case BG:
-                DoAction(remapActionWithUserPreferences(sharedPrefs.getString("action_bg", "menu")));
-                break;
-            case COB:
-                DoAction(remapActionWithUserPreferences(sharedPrefs.getString("action_cob", "none")));
-                break;
-            case IOB:
-                DoAction(remapActionWithUserPreferences(sharedPrefs.getString("action_iob", "none")));
-                break;
-            case TIME:
-                DoAction(remapActionWithUserPreferences(sharedPrefs.getString("action_time", "none")));
-                break;
-            case DELTA:
-                DoAction(remapActionWithUserPreferences(sharedPrefs.getString("action_delta", "none")));
-                break;
             case BACKGROUND:
                 DoAction(WatchfaceAction.MENU);
                 break;

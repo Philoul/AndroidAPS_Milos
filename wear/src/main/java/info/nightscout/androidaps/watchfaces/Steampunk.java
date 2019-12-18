@@ -61,34 +61,6 @@ public class Steampunk extends BaseWatchFace {
             } else {                                                // on all background (outside chart and Top, Down, left, right and center) access to main menu
                 TapZone = WatchfaceZone.BACKGROUND;
             }
-
-/*   First version of code with action according to BG, COB, IOB, TIME and DELTA
-            if (x >= mChartTap.getLeft() &&
-                    x <= mChartTap.getRight() &&
-                    y >= mChartTap.getTop() &&
-                    y <= mChartTap.getBottom()) {                                // if double tap in chart
-                TapZone = WatchfaceZone.CHART;
-            } else if (x >= 2 * mLinearLayout.getWidth() / 3 &&
-                    y >= mLinearLayout.getHeight() / 3 &&
-                    y <= 2 * mLinearLayout.getHeight() / 3) {                     // if double tap on BG value
-                TapZone = WatchfaceZone.BG;
-            } else if (x <= mLinearLayout.getWidth() / 3 &&
-                    y >= mLinearLayout.getHeight() / 3 &&
-                    y <= 2 * mLinearLayout.getHeight() / 3) {                     // if double tap on delta value
-                TapZone = WatchfaceZone.DELTA;
-            } else if (x >= mLinearLayout.getWidth() / 3 &&
-                    x <= 2 * mLinearLayout.getWidth() / 3 &&
-                    y <= mLinearLayout.getHeight() / 3) {                     // if double tap on iob value
-                TapZone = WatchfaceZone.IOB;
-            } else if (x >= mLinearLayout.getWidth() / 3 &&
-                    x <= 2 * mLinearLayout.getWidth() / 3 &&
-                    y >= mLinearLayout.getHeight() / 3 &&
-                    y <= 2 * mLinearLayout.getHeight() / 3) {                     // if double tap on time value
-                TapZone = WatchfaceZone.TIME;
-            } else {                              // on all background (outside BG, COB, IOB and Hour zone) access to main menu
-                TapZone = WatchfaceZone.BACKGROUND;
-            }
-*/
             if (eventTime - TapTime < 800 && LastZone == TapZone) {
                 DoTapAction(TapZone);
             }

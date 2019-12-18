@@ -229,49 +229,6 @@
         app:wear_iconOff="@drawable/settings_off"
         app:wear_iconOn="@drawable/settings_on"/>
 
-    <!-- Philoul : I leave first version of code, with preference according to informations BG, IOB, COB, TIME and DELTA
-
-    <ListPreference
-        android:defaultValue="menu"
-        android:entries="@array/watchface_action"
-        android:entryValues="@array/watchface_action_values"
-        android:key="action_bg"
-        android:summary="What action after double tap on bg"
-        android:title="@string/pref_action_bg" />
-
-    <ListPreference
-        android:defaultValue="none"
-        android:entries="@array/watchface_action"
-        android:entryValues="@array/watchface_action_values"
-        android:key="action_iob"
-        android:summary="What action after double tap on iob"
-        android:title="@string/pref_action_iob" />
-
-    <ListPreference
-        android:defaultValue="none"
-        android:entries="@array/watchface_action"
-        android:entryValues="@array/watchface_action_values"
-        android:key="action_cob"
-        android:summary="What action after double tap on cob"
-        android:title="@string/pref_action_cob" />
-
-    <ListPreference
-        android:defaultValue="none"
-        android:entries="@array/watchface_action"
-        android:entryValues="@array/watchface_action_values"
-        android:key="action_time"
-        android:summary="What action after double tap on time"
-        android:title="@string/pref_action_time" />
-
-    <ListPreference
-        android:defaultValue="none"
-        android:entries="@array/watchface_action"
-        android:entryValues="@array/watchface_action_values"
-        android:key="action_delta"
-        android:summary="What action after double tap on delta"
-        android:title="@string/pref_action_delta" />
--->
-
     <ListPreference
         android:defaultValue="menu"
         android:entries="@array/watchface_action"
