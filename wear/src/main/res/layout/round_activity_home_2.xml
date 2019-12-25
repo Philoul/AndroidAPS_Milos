@@ -53,6 +53,7 @@
                 android:paddingTop="-2dp"
                 android:text="---"
                 android:textColor="#FFFFFF"
+                android:textStyle="bold"
                 android:textSize="38sp" />
 
             <LinearLayout
@@ -221,7 +222,6 @@
                 android:layout_gravity="center"
                 android:baselineAligned="false"
                 android:gravity="center"
-                android:orientation="horizontal"
                 android:weightSum="7">
 
                 <LinearLayout
@@ -267,7 +267,7 @@
                 <LinearLayout
                     android:layout_width="0px"
                     android:layout_height="match_parent"
-                    android:layout_weight="1"
+                    android:layout_weight="0.6"
                     android:orientation="horizontal" />
 
                 <TextView
@@ -279,7 +279,8 @@
                     android:text="12:00"
                     android:textAlignment="center"
                     android:textColor="#FFFFFF"
-                    android:textSize="30sp" />
+                    android:textSize="30sp"
+                    android:textStyle="bold" />
 
                 <LinearLayout
                     android:id="@+id/date_time"
@@ -317,7 +318,7 @@
                 <LinearLayout
                     android:layout_width="0px"
                     android:layout_height="match_parent"
-                    android:layout_weight="1"
+                    android:layout_weight="0.6"
                     android:orientation="horizontal" />
 
                 <LinearLayout
@@ -357,7 +358,7 @@
                 <LinearLayout
                     android:layout_width="0px"
                     android:layout_height="match_parent"
-                    android:layout_weight="1"
+                    android:layout_weight="0"
                     android:orientation="horizontal" />
 
             </LinearLayout>
