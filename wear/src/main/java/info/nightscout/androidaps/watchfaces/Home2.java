@@ -1,21 +1,17 @@
 package info.nightscout.androidaps.watchfaces;
 
-import android.content.Intent;
 import android.graphics.Color;
 import androidx.annotation.ColorInt;
 import androidx.core.content.ContextCompat;
 import android.support.wearable.watchface.WatchFaceStyle;
 import android.view.LayoutInflater;
-
 import com.ustwo.clockwise.common.WatchMode;
 
 import info.nightscout.androidaps.R;
-import info.nightscout.androidaps.interaction.menus.MainMenuActivity;
 
 public class Home2 extends BaseWatchFace {
-
-    private long chartTapTime = 0;
-    private long sgvTapTime = 0;
+    private long TapTime = 0;
+    private WatchfaceZone LastZone = WatchfaceZone.NONE;
 
     @Override
     public void onCreate() {
@@ -28,36 +24,41 @@ public class Home2 extends BaseWatchFace {
     @Override
     protected void onTapCommand(int tapType, int x, int y, long eventTime) {
 
-        int extra = mSgv!=null?(mSgv.getRight() - mSgv.getLeft())/2:0;
+        if (tapType == TAP_TYPE_TAP) {
+            WatchfaceZone TapZone = WatchfaceZone.NONE;
+            int xlow = mRelativeLayout.getWidth()/3;
+            int ylow = chart.getTop()/2;
 
-        if (tapType == TAP_TYPE_TAP&&
-                x >=chart.getLeft() &&
-                x <= chart.getRight()&&
-                y >= chart.getTop() &&
-                y <= chart.getBottom()){
-            if (eventTime - chartTapTime < 800){
-                changeChartTimeframe();
+            if (x >= chart.getLeft() &&
+                    x <= chart.getRight() &&
+                    y >= chart.getTop() &&
+                    y <= chart.getBottom()) {                       // if double tap in chart
+                TapZone = WatchfaceZone.CHART;
+            } else if (x >= xlow &&
+                    x  <= 2*xlow &&
+                    y <= ylow) {                                    // if double tap on TOP
+                TapZone = WatchfaceZone.TOP;
+            } else if (x <= xlow &&
+                    y >= ylow) {                                    // if double tap on LEFT
+                TapZone = WatchfaceZone.LEFT;
+            } else if (x >= 2*xlow &&
+                    y >= ylow) {                                    // if double tap on RIGHT
+                TapZone = WatchfaceZone.RIGHT;
+            } else if (x >= xlow &&
+                    x  <= 2*xlow &&
+                    y >= ylow) {                                    // if double tap on CENTER
+                TapZone = WatchfaceZone.CENTER;
+            } else {                                                // on all background (outside chart and Top, Down, left, right and center) access to main menu
+                TapZone = WatchfaceZone.BACKGROUND;
             }
-            chartTapTime = eventTime;
-        } else if (tapType == TAP_TYPE_TAP&&
-                x + extra >=mSgv.getLeft() &&
-                x - extra <= mSgv.getRight()&&
-                y >= mSgv.getTop() &&
-                y <= mSgv.getBottom()){
-            if (eventTime - sgvTapTime < 800){
-                Intent intent = new Intent(this, MainMenuActivity.class);
-                intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                startActivity(intent);
+            if (eventTime - TapTime < 800 && LastZone == TapZone) {
+                DoTapAction(TapZone);
             }
-            sgvTapTime = eventTime;
+            TapTime = eventTime;
+            LastZone = TapZone;
         }
     }
 
-    private void changeChartTimeframe() {
-        int timeframe = Integer.parseInt(sharedPrefs.getString("chart_timeframe", "3"));
-        timeframe = (timeframe%5) + 1;
-        sharedPrefs.edit().putString("chart_timeframe", "" + timeframe).commit();
-    }
 
     @Override
     protected WatchFaceStyle getWatchFaceStyle(){
