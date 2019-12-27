@@ -73,7 +73,7 @@ public class BIGChart extends WatchFace implements SharedPreferences.OnSharedPre
     public int basalBackgroundColor = Color.BLUE;
     public int basalCenterColor = Color.BLUE;
     public int bolusColor = Color.MAGENTA;
-    public int carbsColor = Color.GREEN;
+    public int carbsColor = Color.rgb(255,160,0);
     public int pointSize = 2;
     public boolean lowResMode = false;
     public boolean layoutSet = false;
