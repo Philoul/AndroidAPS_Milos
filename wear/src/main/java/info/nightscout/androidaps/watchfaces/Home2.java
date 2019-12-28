@@ -250,10 +250,10 @@ public class Home2 extends BaseWatchFace {
 
     protected void setTextSizes() {
         // Adjust text size according to watchscreen resolution
-        int hoursize = mRelativeLayout.getHeight()/9;   // 35 for 320 (original = 30
-        int svgsize = mRelativeLayout.getHeight()/8;   // 29 for 320 (original = 28
-        int smalltxt = mRelativeLayout.getHeight()/32;  // 10 for 320
-        int midtxt = mRelativeLayout.getHeight()/23;    // 14 for 320
+        double hoursize = mRelativeLayout.getHeight()/9.5;   // 42 for 400, 34 for 320 , 29 for 280 (original = 30)
+        int svgsize = mRelativeLayout.getHeight()/8;   // 50 for 400, 40 for 320 , 35 for 280 (original = 38)
+        int smalltxt = mRelativeLayout.getHeight()/32;  // 13 for 400, 10 for 320 , 9 for 280 (original = 10)
+        int midtxt = mRelativeLayout.getHeight()/25;    // 16 for 400, 13 for 320 , 11 for 280 (original = 14)
         int topmargin = mRelativeLayout.getHeight()>320 ? (320 - mRelativeLayout.getHeight())/10 : 0;   // top margin for hour needs to be adjust above 320px
         LinearLayout.LayoutParams params = (LinearLayout.LayoutParams)mTime.getLayoutParams();
         if (mIOB1 != null && mIOB2 != null) {
@@ -268,8 +268,8 @@ public class Home2 extends BaseWatchFace {
         mCOB1.setTextSize(smalltxt);
         mCOB2.setTextSize(midtxt);
         mDay.setTextSize(midtxt);
-        mMonth.setTextSize(midtxt);
-        mTime.setTextSize(hoursize);
+        mMonth.setTextSize(smalltxt);
+        mTime.setTextSize((int) hoursize);
         params.setMargins(0, topmargin, 0, 0); //substitute parameters for left, top, right, bottom
         mTime.setLayoutParams(params);
         mSgv.setTextSize(svgsize);
