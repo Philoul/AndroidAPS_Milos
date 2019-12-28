@@ -5,6 +5,7 @@ import androidx.annotation.ColorInt;
 import androidx.core.content.ContextCompat;
 import android.support.wearable.watchface.WatchFaceStyle;
 import android.view.LayoutInflater;
+import android.widget.LinearLayout;
 import com.ustwo.clockwise.common.WatchMode;
 
 import info.nightscout.androidaps.R;
@@ -77,10 +78,10 @@ public class Home2 extends BaseWatchFace {
         mLinearLayout2.setBackgroundColor(ContextCompat.getColor(getApplicationContext(), R.color.dark_background));
         mRelativeLayout.setBackgroundColor(ContextCompat.getColor(getApplicationContext(), R.color.dark_background));
         mTime.setTextColor(ContextCompat.getColor(getApplicationContext(), R.color.dark_mTime));
-        mIOB1.setTextColor(ContextCompat.getColor(getApplicationContext(), R.color.dark_mTime));
-        mIOB2.setTextColor(ContextCompat.getColor(getApplicationContext(), R.color.dark_mTime));
-        mCOB1.setTextColor(ContextCompat.getColor(getApplicationContext(), R.color.dark_mTime));
-        mCOB2.setTextColor(ContextCompat.getColor(getApplicationContext(), R.color.dark_mTime));
+        mIOB1.setTextColor(ContextCompat.getColor(getApplicationContext(), R.color.grey_300));
+        mIOB2.setTextColor(ContextCompat.getColor(getApplicationContext(), R.color.grey_300));
+        mCOB1.setTextColor(ContextCompat.getColor(getApplicationContext(), R.color.grey_300));
+        mCOB2.setTextColor(ContextCompat.getColor(getApplicationContext(), R.color.grey_300));
         mDay.setTextColor(ContextCompat.getColor(getApplicationContext(), R.color.dark_mTime));
         mMonth.setTextColor(ContextCompat.getColor(getApplicationContext(), R.color.dark_mTime));
         mLoop.setTextColor(ContextCompat.getColor(getApplicationContext(), R.color.dark_mTime));
@@ -187,10 +188,10 @@ public class Home2 extends BaseWatchFace {
             mLinearLayout2.setBackgroundColor(ContextCompat.getColor(getApplicationContext(), R.color.light_background));
             mRelativeLayout.setBackgroundColor(ContextCompat.getColor(getApplicationContext(), R.color.light_background));
             mTime.setTextColor(Color.BLACK);
-            mIOB1.setTextColor(Color.BLACK);
-            mIOB2.setTextColor(Color.BLACK);
-            mCOB1.setTextColor(Color.BLACK);
-            mCOB2.setTextColor(Color.BLACK);
+            mIOB1.setTextColor(ContextCompat.getColor(getApplicationContext(), R.color.grey_500));
+            mIOB2.setTextColor(ContextCompat.getColor(getApplicationContext(), R.color.grey_500));
+            mCOB1.setTextColor(ContextCompat.getColor(getApplicationContext(), R.color.grey_500));
+            mCOB2.setTextColor(ContextCompat.getColor(getApplicationContext(), R.color.grey_500));
             mDay.setTextColor(Color.BLACK);
             mMonth.setTextColor(Color.BLACK);
             mLoop.setTextColor(Color.BLACK);
@@ -248,21 +249,29 @@ public class Home2 extends BaseWatchFace {
     }
 
     protected void setTextSizes() {
-
+        // Adjust text size according to watchscreen resolution
+        int hoursize = mRelativeLayout.getHeight()/9;   // 35 for 320 (original = 30
+        int svgsize = mRelativeLayout.getHeight()/11;   // 29 for 320 (original = 28
+        int smalltxt = mRelativeLayout.getHeight()/32;  // 10 for 320
+        int midtxt = mRelativeLayout.getHeight()/23;    // 14 for 320
+        int topmargin = mRelativeLayout.getHeight()>320 ? (320 - mRelativeLayout.getHeight())/10 : 0;   // top margin for hour needs to be adjust above 320px
+        LinearLayout.LayoutParams params = (LinearLayout.LayoutParams)mTime.getLayoutParams();
         if (mIOB1 != null && mIOB2 != null) {
-
             if (rawData.detailedIOB) {
-                mIOB1.setTextSize(14);
-                mIOB2.setTextSize(10);
+                mIOB1.setTextSize(midtxt);
+                mIOB2.setTextSize(smalltxt);
             } else {
-                mIOB1.setTextSize(10);
-                mIOB2.setTextSize(14);
+                mIOB1.setTextSize(smalltxt);
+                mIOB2.setTextSize(midtxt);
             }
         }
-        if(lowResMode){
-            mTime.setTextSize(32);
-        } else {
-            mTime.setTextSize(40);
-        }
+        mCOB1.setTextSize(smalltxt);
+        mCOB2.setTextSize(midtxt);
+        mDay.setTextSize(midtxt);
+        mMonth.setTextSize(midtxt);
+        mTime.setTextSize(hoursize);
+        params.setMargins(0, topmargin, 0, 0); //substitute parameters for left, top, right, bottom
+        mTime.setLayoutParams(params);
+        mSgv.setTextSize(svgsize);
     }
 }
