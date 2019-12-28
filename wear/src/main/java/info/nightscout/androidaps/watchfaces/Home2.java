@@ -188,10 +188,10 @@ public class Home2 extends BaseWatchFace {
             mLinearLayout2.setBackgroundColor(ContextCompat.getColor(getApplicationContext(), R.color.light_background));
             mRelativeLayout.setBackgroundColor(ContextCompat.getColor(getApplicationContext(), R.color.light_background));
             mTime.setTextColor(Color.BLACK);
-            mIOB1.setTextColor(ContextCompat.getColor(getApplicationContext(), R.color.grey_500));
-            mIOB2.setTextColor(ContextCompat.getColor(getApplicationContext(), R.color.grey_500));
-            mCOB1.setTextColor(ContextCompat.getColor(getApplicationContext(), R.color.grey_500));
-            mCOB2.setTextColor(ContextCompat.getColor(getApplicationContext(), R.color.grey_500));
+            mIOB1.setTextColor(ContextCompat.getColor(getApplicationContext(), R.color.grey_steampunk));
+            mIOB2.setTextColor(ContextCompat.getColor(getApplicationContext(), R.color.grey_steampunk));
+            mCOB1.setTextColor(ContextCompat.getColor(getApplicationContext(), R.color.grey_steampunk));
+            mCOB2.setTextColor(ContextCompat.getColor(getApplicationContext(), R.color.grey_steampunk));
             mDay.setTextColor(Color.BLACK);
             mMonth.setTextColor(Color.BLACK);
             mLoop.setTextColor(Color.BLACK);
