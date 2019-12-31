@@ -32,7 +32,7 @@
 
     <color name="dark_highColor">@color/yellow_A200</color>
     <color name="dark_lowColor">@color/RED</color>
-    <color name="dark_midColor">@color/green</color>
+    <color name="dark_midColor">@color/green_500</color>
     <color name="dark_gridColor">@color/grey_50</color>
     <color name="dark_carbcolor">@color/carb</color>
 
@@ -70,6 +70,7 @@
     <!-- Blue -->
 
     <!--  Green -->
+    <color name="green_500">#9EFF9E</color>
     <color name="green">#00FF00</color>
     <color name="green_300">#01C501</color>
     <!--  Green -->
