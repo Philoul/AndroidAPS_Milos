@@ -569,25 +569,25 @@ public  abstract class BaseWatchFace extends WatchFace implements SharedPreferen
         }
     }
 
-    public void DoTapAction(WatchfaceZone zone) {
+    public void doTapAction(WatchfaceZone zone) {
         switch (zone) {
             case BACKGROUND:
-                DoAction(WatchfaceAction.MENU);
+                doAction(WatchfaceAction.MENU);
                 break;
             case TOP:
-                DoAction(remapActionWithUserPreferences(sharedPrefs.getString("action_top", "none")));
+                doAction(remapActionWithUserPreferences(sharedPrefs.getString("action_top", "none")));
                 break;
             case DOWN:
-                DoAction(remapActionWithUserPreferences(sharedPrefs.getString("action_down", "none")));
+                doAction(remapActionWithUserPreferences(sharedPrefs.getString("action_down", "none")));
                 break;
             case LEFT:
-                DoAction(remapActionWithUserPreferences(sharedPrefs.getString("action_left", "none")));
+                doAction(remapActionWithUserPreferences(sharedPrefs.getString("action_left", "none")));
                 break;
             case RIGHT:
-                DoAction(remapActionWithUserPreferences(sharedPrefs.getString("action_right", "none")));
+                doAction(remapActionWithUserPreferences(sharedPrefs.getString("action_right", "none")));
                 break;
             case CENTER:
-                DoAction(remapActionWithUserPreferences(sharedPrefs.getString("action_center", "none")));
+                doAction(remapActionWithUserPreferences(sharedPrefs.getString("action_center", "none")));
                 break;
             case CHART:
                 int timeframe = Integer.parseInt(sharedPrefs.getString("chart_timeframe", "3"));
@@ -609,7 +609,7 @@ public  abstract class BaseWatchFace extends WatchFace implements SharedPreferen
 
 
 
-    public void DoAction(WatchfaceAction action) {
+    public void doAction(WatchfaceAction action) {
         Intent intent = null;
 
         switch (action) {

@@ -40,20 +40,27 @@ public class Home2 extends BaseWatchFace {
                     y <= ylow) {                                    // if double tap on TOP
                 TapZone = WatchfaceZone.TOP;
             } else if (x <= xlow &&
-                    y >= ylow) {                                    // if double tap on LEFT
+                    y >= ylow &&
+                    y <= 2*ylow) {                                    // if double tap on LEFT
                 TapZone = WatchfaceZone.LEFT;
             } else if (x >= 2*xlow &&
-                    y >= ylow) {                                    // if double tap on RIGHT
+                    y >= ylow &&
+                    y <= 2*ylow) {                                    // if double tap on RIGHT
                 TapZone = WatchfaceZone.RIGHT;
             } else if (x >= xlow &&
                     x  <= 2*xlow &&
-                    y >= ylow) {                                    // if double tap on CENTER
+                    y >= ylow &&
+                    y <= 2*ylow) {                                    // if double tap on CENTER
                 TapZone = WatchfaceZone.CENTER;
+            } else if (x >= xlow &&
+                    x  <= 2*xlow &&
+                    y >= 2*ylow) {                                  // // if double tap on DOWN (below chart)
+                TapZone = WatchfaceZone.DOWN;
             } else {                                                // on all background (outside chart and Top, Down, left, right and center) access to main menu
                 TapZone = WatchfaceZone.BACKGROUND;
             }
             if (eventTime - TapTime < 800 && LastZone == TapZone) {
-                DoTapAction(TapZone);
+                doTapAction(TapZone);
             }
             TapTime = eventTime;
             LastZone = TapZone;
