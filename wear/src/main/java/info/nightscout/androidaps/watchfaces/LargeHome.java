@@ -56,7 +56,7 @@ public class LargeHome extends BaseWatchFace {
                 TapZone = WatchfaceZone.BACKGROUND;
             }
             if (eventTime - TapTime < 800 && LastZone == TapZone) {
-                DoTapAction(TapZone);
+                doTapAction(TapZone);
             }
             TapTime = eventTime;
             LastZone = TapZone;

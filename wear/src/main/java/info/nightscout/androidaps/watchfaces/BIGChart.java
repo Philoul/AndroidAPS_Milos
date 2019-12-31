@@ -193,7 +193,7 @@ public class BIGChart extends WatchFace implements SharedPreferences.OnSharedPre
                 TapZone = WatchfaceZone.BACKGROUND;
             }
             if (eventTime - TapTime < 800 && LastZone == TapZone) {
-                DoTapAction(TapZone);
+                doTapAction(TapZone);
             }
             TapTime = eventTime;
             LastZone = TapZone;
@@ -201,25 +201,25 @@ public class BIGChart extends WatchFace implements SharedPreferences.OnSharedPre
     }
 
 
-    private void DoTapAction(WatchfaceZone zone) {
+    private void doTapAction(WatchfaceZone zone) {
         switch (zone) {
             case BACKGROUND:
-                DoAction(WatchfaceAction.MENU);
+                doAction(WatchfaceAction.MENU);
                 break;
             case TOP:
-                DoAction(remapActionWithUserPreferences(sharedPrefs.getString("action_top", "none")));
+                doAction(remapActionWithUserPreferences(sharedPrefs.getString("action_top", "none")));
                 break;
             case DOWN:
-                DoAction(remapActionWithUserPreferences(sharedPrefs.getString("action_down", "none")));
+                doAction(remapActionWithUserPreferences(sharedPrefs.getString("action_down", "none")));
                 break;
             case LEFT:
-                DoAction(remapActionWithUserPreferences(sharedPrefs.getString("action_left", "none")));
+                doAction(remapActionWithUserPreferences(sharedPrefs.getString("action_left", "none")));
                 break;
             case RIGHT:
-                DoAction(remapActionWithUserPreferences(sharedPrefs.getString("action_right", "none")));
+                doAction(remapActionWithUserPreferences(sharedPrefs.getString("action_right", "none")));
                 break;
             case CENTER:
-                DoAction(remapActionWithUserPreferences(sharedPrefs.getString("action_center", "none")));
+                doAction(remapActionWithUserPreferences(sharedPrefs.getString("action_center", "none")));
                 break;
             case CHART:
                 int timeframe = Integer.parseInt(sharedPrefs.getString("chart_timeframe", "3"));
@@ -234,7 +234,7 @@ public class BIGChart extends WatchFace implements SharedPreferences.OnSharedPre
 
 
 
-    private void DoAction(WatchfaceAction action) {
+    private void doAction(WatchfaceAction action) {
         Intent intent = null;
 
         switch (action) {
