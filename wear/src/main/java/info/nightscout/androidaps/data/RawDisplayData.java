@@ -49,6 +49,7 @@ public class RawDisplayData {
     public String externalStatusString = "no status";
     public int batteryLevel = 1;
     public long openApsStatus = -1;
+    public boolean looping = false;
 
     // basals bundle
     public ArrayList<BgWatchData> bgDataList = new ArrayList<>();
@@ -84,6 +85,7 @@ public class RawDisplayData {
                 ", basalWatchDataList size=" + basalWatchDataList.size() +
                 ", bolusWatchDataLis size=" + bolusWatchDataList.size() +
                 ", predictionList size=" + predictionList.size() +
+                ", looping=" + looping +
                 '}';
     }
 
@@ -164,6 +166,7 @@ public class RawDisplayData {
         externalStatusString = dataMap.getString("externalStatusString");
         batteryLevel = dataMap.getInt("batteryLevel");
         openApsStatus = dataMap.getLong("openApsStatus");
+        looping = dataMap.getBoolean("looping");
     }
 
     public DataMap updateBasalsFromMessage(Intent intent, PowerManager.WakeLock wakeLock) {

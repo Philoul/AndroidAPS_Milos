@@ -498,11 +498,23 @@
         </activity>
         <activity
             android:name=".interaction.actions.ECarbActivity"
-            android:label="Fill">
+            android:label="ECarb">
         </activity>
         <activity
             android:name=".interaction.actions.TempTargetActivity"
             android:label="TempTarget">
+        </activity>
+        <activity
+            android:name=".interaction.actions.DisconnectActivity"
+            android:label="Disconnect">
+        </activity>
+        <activity
+            android:name=".interaction.actions.SuspendActivity"
+            android:label="Suspend">
+        </activity>
+        <activity
+            android:name=".interaction.menus.LoopMenuActivity"
+            android:label="LoopMenu">
         </activity>
     </application>
 </manifest>

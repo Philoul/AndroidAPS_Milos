@@ -41,6 +41,7 @@ import info.nightscout.androidaps.R;
 import info.nightscout.androidaps.interaction.AAPSPreferences;
 import info.nightscout.androidaps.interaction.actions.AcceptActivity;
 import info.nightscout.androidaps.interaction.actions.CPPActivity;
+import info.nightscout.androidaps.interaction.menus.LoopMenuActivity;
 import info.nightscout.androidaps.interaction.utils.Persistence;
 import info.nightscout.androidaps.interaction.utils.SafeParse;
 import info.nightscout.androidaps.interaction.utils.WearUtil;
@@ -504,6 +505,19 @@ public class ListenerService extends WearableListenerService implements GoogleAp
                         Bundle params = new Bundle();
                         params.putInt("percentage", SafeParse.stringToInt(act[1]));
                         params.putInt("timeshift", SafeParse.stringToInt(act[2]));
+                        intent.putExtras(params);
+                        startActivity(intent);
+                    } else if (actionstring.startsWith("loopStatus") ) {
+                        String[] act = actionstring.split("\\s+");
+                        Intent intent = new Intent(this, LoopMenuActivity.class);
+                        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                        Bundle params = new Bundle();
+                        if (act.length == 5) {
+                            params.putBoolean("enabled", Boolean.parseBoolean(act[1]));
+                            params.putBoolean("disconnected", Boolean.parseBoolean(act[2]));
+                            params.putBoolean("suspended", Boolean.parseBoolean(act[3]));
+                            params.putInt("minsToGo", SafeParse.stringToInt(act[4]));
+                        }
                         intent.putExtras(params);
                         startActivity(intent);
                     } else {
