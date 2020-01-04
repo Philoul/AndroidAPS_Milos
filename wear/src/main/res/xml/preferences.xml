@@ -237,6 +237,14 @@
         app:wear_iconOff="@drawable/settings_off"
         app:wear_iconOn="@drawable/settings_on"/>
 
+    <CheckBoxPreference
+        android:defaultValue="false"
+        android:key="changeLoopStatus"
+        android:summary="Change loop status."
+        android:title="Loop in Menu"
+        app:wear_iconOff="@drawable/settings_off"
+        app:wear_iconOn="@drawable/settings_on"/>
+
     <info.nightscout.androidaps.interaction.utils.VersionPreference
         android:defaultValue="1"
         android:entries="@array/input_design"

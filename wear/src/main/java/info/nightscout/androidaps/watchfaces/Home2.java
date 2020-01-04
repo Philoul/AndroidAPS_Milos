@@ -70,7 +70,7 @@ public class Home2 extends BaseWatchFace {
         @ColorInt final int dividerBatteryOkColor = ContextCompat.getColor(getApplicationContext(),
                 dividerMatchesBg ? R.color.dark_midColor : R.color.dark_uploaderBattery);
         @ColorInt final int dividerBgColor = ContextCompat.getColor(getApplicationContext(),
-                dividerMatchesBg ? R.color.dark_background : R.color.dark_statusView);
+                !rawData.looping && sharedPrefs.getBoolean("changeLoopStatus", false) ?  R.color.red : dividerMatchesBg ? R.color.dark_background : R.color.dark_statusView);
 
         mLinearLayout.setBackgroundColor(dividerBgColor);
         mLinearLayout2.setBackgroundColor(ContextCompat.getColor(getApplicationContext(), R.color.dark_background));
@@ -136,7 +136,7 @@ public class Home2 extends BaseWatchFace {
         @ColorInt final int dividerTxtColor = dividerMatchesBg ?
                 ContextCompat.getColor(getApplicationContext(), R.color.dark_midColor) : Color.BLACK;
         @ColorInt final int dividerBgColor = ContextCompat.getColor(getApplicationContext(),
-                dividerMatchesBg ? R.color.dark_background : R.color.dark_statusView);
+                !rawData.looping && sharedPrefs.getBoolean("changeLoopStatus", false) ?  R.color.red : dividerMatchesBg ? R.color.dark_background : R.color.dark_statusView);
 
         mLinearLayout.setBackgroundColor(dividerBgColor);
         mLinearLayout2.setBackgroundColor(ContextCompat.getColor(getApplicationContext(), R.color.dark_background));
@@ -179,7 +179,7 @@ public class Home2 extends BaseWatchFace {
             @ColorInt final int dividerTxtColor = dividerMatchesBg ?  Color.BLACK :
                     ContextCompat.getColor(getApplicationContext(), R.color.dark_midColor);
             @ColorInt final int dividerBgColor = ContextCompat.getColor(getApplicationContext(),
-                    dividerMatchesBg ? R.color.light_background : R.color.light_stripe_background);
+                    !rawData.looping && sharedPrefs.getBoolean("changeLoopStatus", false) ?  R.color.red : dividerMatchesBg ? R.color.light_background : R.color.light_stripe_background);
 
             mLinearLayout.setBackgroundColor(dividerBgColor);
             mLinearLayout2.setBackgroundColor(ContextCompat.getColor(getApplicationContext(), R.color.light_background));
