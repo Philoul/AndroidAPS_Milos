@@ -407,7 +407,8 @@ public class ActionStringHandler {
             } else {
                 rMessage += "Enable loop";
                 rAction = actionstring;
-            }       } else return;
+            }
+        } else return;
 
 
         // send result
