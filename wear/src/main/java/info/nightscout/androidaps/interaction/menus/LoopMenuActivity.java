@@ -23,12 +23,10 @@ public class LoopMenuActivity extends MenuListActivity {
         if (!enabled) {
             elements = new String[1];
             elements[0] = "Enable";
-        }
-        else if (disconnected || suspended) {
+        } else if (disconnected || suspended) {
             elements = new String[1];
             elements[0] = "Resume";
-        }
-        else {
+        } else {
             elements = new String[3];
             elements[0] = "Disconnect";
             elements[1] = "Suspend";

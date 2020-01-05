@@ -362,7 +362,7 @@ public class ActionStringHandler {
         } else if ("loopStatus".equals(act[0])) {
             final LoopPlugin loopPlugin = LoopPlugin.getPlugin();
             rTitle = "loopStatus";
-            rAction = "loopStatus" + " " + loopPlugin.isEnabled(PluginType.LOOP) + " " + loopPlugin.isDisconnected() +  " " + loopPlugin.isSuspended() + " " + loopPlugin.minutesToEndOfSuspend() ;
+            rAction = "loopStatus" + " " + loopPlugin.isEnabled(PluginType.LOOP) + " " + loopPlugin.isDisconnected() + " " + loopPlugin.isSuspended() + " " + loopPlugin.minutesToEndOfSuspend();
         } else if ("disconnect".equals(act[0])) {
             final LoopPlugin loopPlugin = LoopPlugin.getPlugin();
             if (loopPlugin.isDisconnected()) {
@@ -699,7 +699,8 @@ public class ActionStringHandler {
         } else if ("disable".equals(act[0])) {
             doDisable();
         } else if ("enable".equals(act[0])) {
-            doEnable();       }
+            doEnable();
+        }
         lastBolusWizard = null;
     }
 
@@ -819,7 +820,7 @@ public class ActionStringHandler {
         lastBolusWizard = null;
     }
 
-    private static void  doDisconnect(int duration) {
+    private static void doDisconnect(int duration) {
         final Profile profile = ProfileFunctions.getInstance().getProfile();
         if (profile != null) {
             final LoopPlugin loopPlugin = LoopPlugin.getPlugin();

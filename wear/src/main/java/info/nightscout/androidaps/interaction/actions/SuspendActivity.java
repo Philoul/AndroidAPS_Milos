@@ -63,7 +63,7 @@ public class SuspendActivity extends ViewSelectorActivity {
         @Override
         public Object instantiateItem(ViewGroup container, int row, int col) {
 
-            if(col == 0){
+            if (col == 0) {
                 final View view = getInflatedPlusMinusView(container);
                 final TextView textView = (TextView) view.findViewById(R.id.label);
                 textView.setText("duration");
@@ -77,7 +77,7 @@ public class SuspendActivity extends ViewSelectorActivity {
                 container.addView(view);
                 return view;
 
-            }else {
+            } else {
 
                 final View view = LayoutInflater.from(getApplicationContext()).inflate(R.layout.action_send_item, container, false);
                 final ImageView confirmbutton = (ImageView) view.findViewById(R.id.confirmbutton);
@@ -88,7 +88,7 @@ public class SuspendActivity extends ViewSelectorActivity {
                         //check if it can happen that the fagment is never created that hold data?
                         // (you have to swipe past them anyways - but still)
 
-                        String actionstring = "suspend " + SafeParse.stringToInt(time.editText.getText().toString()) ;
+                        String actionstring = "suspend " + SafeParse.stringToInt(time.editText.getText().toString());
 
                         ListenerService.initiateAction(SuspendActivity.this, actionstring);
                         finish();
@@ -103,12 +103,12 @@ public class SuspendActivity extends ViewSelectorActivity {
         public void destroyItem(ViewGroup container, int row, int col, Object view) {
             // Handle this to get the data before the view is destroyed?
             // Object should still be kept by this, just setup for reinit?
-            container.removeView((View)view);
+            container.removeView((View) view);
         }
 
         @Override
         public boolean isViewFromObject(View view, Object object) {
-            return view==object;
+            return view == object;
         }
 
 

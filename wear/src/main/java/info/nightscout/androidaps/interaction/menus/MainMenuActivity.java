@@ -37,20 +37,20 @@ public class MainMenuActivity extends MenuListActivity {
     protected String[] getElements() {
         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
 
-        if(!sharedPreferences.getBoolean("wearcontrol", false)){
-            return new String[] {
+        if (!sharedPreferences.getBoolean("wearcontrol", false)) {
+            return new String[]{
                     "Settings",
                     "Re-Sync"};
         }
 
 
-        boolean showPrimeFill  = sp.getBoolean("primefill", false);
-        boolean showWizard  = sp.getBoolean("showWizard", true);
+        boolean showPrimeFill = sp.getBoolean("primefill", false);
+        boolean showWizard = sp.getBoolean("showWizard", true);
         boolean changeLoopStatus = sp.getBoolean("changeLoopStatus", false);
 
         Vector<String> menuitems = new Vector<String>();
         menuitems.add(aaps.gs(R.string.menu_tempt));
-        if(showWizard) menuitems.add(aaps.gs(R.string.menu_wizard));
+        if (showWizard) menuitems.add(aaps.gs(R.string.menu_wizard));
         menuitems.add(aaps.gs(R.string.menu_ecarb));
         menuitems.add(aaps.gs(R.string.menu_bolus));
         if (changeLoopStatus) menuitems.add("Loop");
