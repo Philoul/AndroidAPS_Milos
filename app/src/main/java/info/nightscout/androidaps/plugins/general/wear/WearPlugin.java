@@ -180,57 +180,82 @@ public class WearPlugin extends PluginBase {
 
         //Log.d(TAG, "WR: WearPlugin:sendDataToWatch (status=" + status + ",basals=" + basals + ",bgValue=" + bgValue + ")");
 
-        if (isEnabled(getType())) { // only start service when this plugin is enabled
+        if (isEnabled(getType()) ) { // only start service when this plugin is enabled
+            if (SP.getBoolean("wearenable", true)) { // then starts WatchUpdaterService for Wear OS if enable
+                if (bgValue) {
+                    ctx.startService(new Intent(ctx, WatchUpdaterService.class));
+                }
 
-            if (bgValue) {
-                ctx.startService(new Intent(ctx, WatchUpdaterService.class));
+                if (basals) {
+                    ctx.startService(new Intent(ctx, WatchUpdaterService.class).setAction(WatchUpdaterService.ACTION_SEND_BASALS));
+                }
+
+                if (status) {
+                    ctx.startService(new Intent(ctx, WatchUpdaterService.class).setAction(WatchUpdaterService.ACTION_SEND_STATUS));
+                }
             }
 
-            if (basals) {
-                ctx.startService(new Intent(ctx, WatchUpdaterService.class).setAction(WatchUpdaterService.ACTION_SEND_BASALS));
-            }
+            /* Structure code added for Tizen Watch updater service
+            if (SP.getBoolean("tizenenable", true)) { // then starts WatchUpdaterService for Tizen watch if enable
+                if (bgValue) {
+                    ctx.startService(new Intent(ctx, TizenUpdaterService.class));
+                }
 
-            if (status) {
-                ctx.startService(new Intent(ctx, WatchUpdaterService.class).setAction(WatchUpdaterService.ACTION_SEND_STATUS));
+                if (basals) {
+                    ctx.startService(new Intent(ctx, TizenUpdaterService.class).setAction(WatchUpdaterService.ACTION_SEND_BASALS));
+                }
+
+                if (status) {
+                    ctx.startService(new Intent(ctx, TizenUpdaterService.class).setAction(WatchUpdaterService.ACTION_SEND_STATUS));
+                }
             }
+            */
         }
     }
 
     void resendDataToWatch() {
-        //Log.d(TAG, "WR: WearPlugin:resendDataToWatch");
-        ctx.startService(new Intent(ctx, WatchUpdaterService.class).setAction(WatchUpdaterService.ACTION_RESEND));
+        if (SP.getBoolean("wearenable", true)) { // if Wear OS is enable
+            //Log.d(TAG, "WR: WearPlugin:resendDataToWatch");
+            ctx.startService(new Intent(ctx, WatchUpdaterService.class).setAction(WatchUpdaterService.ACTION_RESEND));
+        }
     }
 
     void openSettings() {
-        //Log.d(TAG, "WR: WearPlugin:openSettings");
-        ctx.startService(new Intent(ctx, WatchUpdaterService.class).setAction(WatchUpdaterService.ACTION_OPEN_SETTINGS));
+        if (SP.getBoolean("wearenable", true)) { // if Wear OS is enable
+            //Log.d(TAG, "WR: WearPlugin:openSettings");
+            ctx.startService(new Intent(ctx, WatchUpdaterService.class).setAction(WatchUpdaterService.ACTION_OPEN_SETTINGS));
+        }
     }
 
     void requestNotificationCancel(String actionstring) {
-        //Log.d(TAG, "WR: WearPlugin:requestNotificationCancel");
+        if (SP.getBoolean("wearenable", true)) { // if Wear OS is enable
+            //Log.d(TAG, "WR: WearPlugin:requestNotificationCancel");
 
-        Intent intent = new Intent(ctx, WatchUpdaterService.class)
-                .setAction(WatchUpdaterService.ACTION_CANCEL_NOTIFICATION);
-        intent.putExtra("actionstring", actionstring);
-        ctx.startService(intent);
+            Intent intent = new Intent(ctx, WatchUpdaterService.class)
+                    .setAction(WatchUpdaterService.ACTION_CANCEL_NOTIFICATION);
+            intent.putExtra("actionstring", actionstring);
+            ctx.startService(intent);
+        }
     }
 
     public void requestActionConfirmation(String title, String message, String actionstring) {
-
-        Intent intent = new Intent(ctx, WatchUpdaterService.class).setAction(WatchUpdaterService.ACTION_SEND_ACTIONCONFIRMATIONREQUEST);
-        intent.putExtra("title", title);
-        intent.putExtra("message", message);
-        intent.putExtra("actionstring", actionstring);
-        ctx.startService(intent);
+        if (SP.getBoolean("wearenable", true)) { // if Wear OS is enable
+            Intent intent = new Intent(ctx, WatchUpdaterService.class).setAction(WatchUpdaterService.ACTION_SEND_ACTIONCONFIRMATIONREQUEST);
+            intent.putExtra("title", title);
+            intent.putExtra("message", message);
+            intent.putExtra("actionstring", actionstring);
+            ctx.startService(intent);
+        }
     }
 
     public void requestChangeConfirmation(String title, String message, String actionstring) {
-
-        Intent intent = new Intent(ctx, WatchUpdaterService.class).setAction(WatchUpdaterService.ACTION_SEND_CHANGECONFIRMATIONREQUEST);
-        intent.putExtra("title", title);
-        intent.putExtra("message", message);
-        intent.putExtra("actionstring", actionstring);
-        ctx.startService(intent);
+        if (SP.getBoolean("wearenable", true)) { // if Wear OS is enable
+            Intent intent = new Intent(ctx, WatchUpdaterService.class).setAction(WatchUpdaterService.ACTION_SEND_CHANGECONFIRMATIONREQUEST);
+            intent.putExtra("title", title);
+            intent.putExtra("message", message);
+            intent.putExtra("actionstring", actionstring);
+            ctx.startService(intent);
+        }
     }
 
     public static void registerWatchUpdaterService(WatchUpdaterService wus) {
