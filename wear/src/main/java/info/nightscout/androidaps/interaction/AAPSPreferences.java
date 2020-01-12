@@ -22,7 +22,7 @@ public class AAPSPreferences extends WearPreferenceActivity {
     @Override
     protected void onPause(){
         super.onPause();
-        finish();
+//        finish();
     }
 
     void removeBackgroundRecursively(View parent) {

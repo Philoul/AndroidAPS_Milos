@@ -78,6 +78,9 @@
     <string name="menu_none">None</string>
     <string name="menu_default">Default</string>
     <string name="menu_menu">Menu</string>
+    <string name="menu_resync">Re-sync</string>
+    <string name="submenu_tapactions">Tap Actions</string>
+    <string name="submenu_complications">Complications</string>
 
     <string name="pref_action_top" comment="In menu, set action when double tap on the top of the screen">Top Action</string>
     <string name="pref_action_down" comment="In menu, set action when double tap on the down of the screen">Down Action</string>

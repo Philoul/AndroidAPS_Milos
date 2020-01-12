@@ -39,8 +39,8 @@ public class MainMenuActivity extends MenuListActivity {
 
         if(!sharedPreferences.getBoolean("wearcontrol", false)){
             return new String[] {
-                    "Settings",
-                    "Re-Sync"};
+                    aaps.gs(R.string.menu_settings),
+                    aaps.gs(R.string.menu_resync)};
         }
 
 
@@ -68,7 +68,7 @@ public class MainMenuActivity extends MenuListActivity {
             intent = new Intent(this, AAPSPreferences.class);
             intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
             this.startActivity(intent);
-        } else if ("Re-Sync".equals(action)) {
+        } else if (aaps.gs(R.string.menu_resync).equals(action)) {
             ListenerService.requestData(this);
         } else if (aaps.gs(R.string.menu_tempt).equals(action)) {
             intent = new Intent(this, TempTargetActivity.class);
