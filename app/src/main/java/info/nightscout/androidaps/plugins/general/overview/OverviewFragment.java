@@ -154,7 +154,6 @@ public class OverviewFragment extends Fragment implements View.OnClickListener, 
     GraphView bgGraph;
     GraphView iobGraph;
     ImageButton chartButton;
-
     TextView iage;
     TextView cage;
     TextView sage;
@@ -271,7 +270,6 @@ public class OverviewFragment extends Fragment implements View.OnClickListener, 
 
         bgGraph = (GraphView) view.findViewById(R.id.overview_bggraph);
         iobGraph = (GraphView) view.findViewById(R.id.overview_iobgraph);
-
         treatmentButton = (SingleClickButton) view.findViewById(R.id.overview_treatmentbutton);
         treatmentButton.setOnClickListener(this);
         wizardButton = (SingleClickButton) view.findViewById(R.id.overview_wizardbutton);
@@ -334,6 +332,7 @@ public class OverviewFragment extends Fragment implements View.OnClickListener, 
             SP.putBoolean(R.string.key_objectiveusescale, true);
             return false;
         });
+        bgGraph.getLayoutParams().height += 375;
 
         setupChartMenu(view);
 
