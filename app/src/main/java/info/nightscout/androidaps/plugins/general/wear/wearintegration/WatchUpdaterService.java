@@ -109,7 +109,7 @@ public class WatchUpdaterService extends WearableListenerService implements Goog
     public void onCreate() {
         listenForChangeInSettings();
         setSettings();
-        if (wear_integration) {
+        if (wear_integration && SP.getBoolean("wearenable", true)) {
             googleApiConnect();
         }
         if (handler == null) {
@@ -126,7 +126,7 @@ public class WatchUpdaterService extends WearableListenerService implements Goog
     public void setSettings() {
         wear_integration = WearPlugin.getPlugin().isEnabled(PluginType.GENERAL);
         // Log.d(TAG, "WR: wear_integration=" + wear_integration);
-        if (wear_integration) {
+        if (wear_integration && SP.getBoolean("wearenable", true)) {
             googleApiConnect();
         }
     }
@@ -153,7 +153,7 @@ public class WatchUpdaterService extends WearableListenerService implements Goog
 
         // Log.d(TAG, logPrefix + "onStartCommand: " + action);
 
-        if (wear_integration) {
+        if (wear_integration && SP.getBoolean("wearenable", true)) {
             handler.post(() -> {
                 if (googleApiClient.isConnected()) {
                     if (ACTION_RESEND.equals(action)) {
