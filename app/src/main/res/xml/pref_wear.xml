@@ -56,7 +56,7 @@
         </PreferenceScreen>
 
     </PreferenceCategory>
-    <!--    settings to be defined for Tizen Watches (Samsung Galaxy watches
+    <!--    settings to be defined for Tizen Watches (Samsung Galaxy watches    -->
     <PreferenceCategory
         android:key="tizenplugin"
         android:title="@string/tizen_settings">
@@ -72,7 +72,7 @@
             android:dependency="tizenenable">
         </PreferenceScreen>
     </PreferenceCategory>
-    -->
+
     <PreferenceCategory
         android:key="wearwizard"
         android:title="@string/wear_wizard_settings"
@@ -83,11 +83,11 @@
             android:key="wearcontrol"
             android:summary="@string/wearcontrol_summary"
             android:title="@string/wearcontrol_title" />
-
-        <PreferenceScreen
-            android:title="@string/wear_wizard_settings"
-            android:dependency="wearcontrol">
-
+        <!--
+                <PreferenceScreen
+                    android:title="@string/wear_wizard_settings"
+                    android:dependency="wearcontrol">
+           -->
             <CheckBoxPreference
                 android:key="@string/key_wearwizard_bg"
                 android:title="@string/treatments_wizard_bg_label"
@@ -123,6 +123,9 @@
                 android:title="@string/treatments_wizard_basaliob_label"
                 android:defaultValue="true"
                 android:dependency="wearcontrol"/>
+        <!--
+
+                </PreferenceScreen>
+    -->
+            </PreferenceCategory>
         </PreferenceScreen>
-    </PreferenceCategory>
-</PreferenceScreen>
