@@ -83,49 +83,54 @@
             android:key="wearcontrol"
             android:summary="@string/wearcontrol_summary"
             android:title="@string/wearcontrol_title" />
-        <!--
-                <PreferenceScreen
+
+            <PreferenceScreen
+                android:title="@string/advancedsettings_title"
+                android:dependency="wearcontrol">
+
+                <PreferenceCategory
                     android:title="@string/wear_wizard_settings"
-                    android:dependency="wearcontrol">
-           -->
-            <CheckBoxPreference
-                android:key="@string/key_wearwizard_bg"
-                android:title="@string/treatments_wizard_bg_label"
-                android:defaultValue="true"
-                android:dependency="wearcontrol"/>
+                    android:summary="@string/wear_wizard_settings_summary">
 
-            <CheckBoxPreference
-                android:key="@string/key_wearwizard_tt"
-                android:title="@string/treatments_wizard_tt_label"
-                android:defaultValue="false"
-                android:dependency="@string/key_wearwizard_bg"/>
+                    <CheckBoxPreference
+                        android:key="@string/key_wearwizard_bg"
+                        android:title="@string/treatments_wizard_bg_label"
+                        android:defaultValue="true"
+                        android:dependency="wearcontrol"/>
 
-            <CheckBoxPreference
-                android:key="@string/key_wearwizard_trend"
-                android:title="@string/treatments_wizard_bgtrend_label"
-                android:defaultValue="false"
-                android:dependency="wearcontrol"/>
+                    <CheckBoxPreference
+                        android:key="@string/key_wearwizard_tt"
+                        android:title="@string/treatments_wizard_tt_label"
+                        android:defaultValue="false"
+                        android:dependency="@string/key_wearwizard_bg"/>
 
-            <CheckBoxPreference
-                android:key="@string/key_wearwizard_cob"
-                android:title="@string/treatments_wizard_cob_label"
-                android:defaultValue="true"
-                android:dependency="wearcontrol"/>
+                    <CheckBoxPreference
+                        android:key="@string/key_wearwizard_trend"
+                        android:title="@string/treatments_wizard_bgtrend_label"
+                        android:defaultValue="false"
+                        android:dependency="wearcontrol"/>
 
-            <CheckBoxPreference
-                android:key="@string/key_wearwizard_bolusiob"
-                android:title="@string/treatments_wizard_bolusiob_label"
-                android:defaultValue="true"
-                android:dependency="wearcontrol"/>
+                    <CheckBoxPreference
+                        android:key="@string/key_wearwizard_cob"
+                        android:title="@string/treatments_wizard_cob_label"
+                        android:defaultValue="true"
+                        android:dependency="wearcontrol"/>
 
-            <CheckBoxPreference
-                android:key="@string/key_wearwizard_basaliob"
-                android:title="@string/treatments_wizard_basaliob_label"
-                android:defaultValue="true"
-                android:dependency="wearcontrol"/>
-        <!--
+                    <CheckBoxPreference
+                        android:key="@string/key_wearwizard_bolusiob"
+                        android:title="@string/treatments_wizard_bolusiob_label"
+                        android:defaultValue="true"
+                        android:dependency="wearcontrol"/>
 
-                </PreferenceScreen>
-    -->
-            </PreferenceCategory>
-        </PreferenceScreen>
+                    <CheckBoxPreference
+                        android:key="@string/key_wearwizard_basaliob"
+                        android:title="@string/treatments_wizard_basaliob_label"
+                        android:defaultValue="true"
+                        android:dependency="wearcontrol"/>
+
+                </PreferenceCategory>
+
+            </PreferenceScreen>
+
+    </PreferenceCategory>
+</PreferenceScreen>
