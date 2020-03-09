@@ -3,7 +3,7 @@
 
     <PreferenceCategory
         android:key="wearplugin"
-        android:title="@string/wearos_settings">
+        android:title="@string/wear_settings">
 
         <SwitchPreference
             android:defaultValue="true"
@@ -55,11 +55,6 @@
             </PreferenceCategory>
         </PreferenceScreen>
 
-    </PreferenceCategory>
-    <!--    settings to be defined for Tizen Watches (Samsung Galaxy watches    -->
-    <PreferenceCategory
-        android:key="tizenplugin"
-        android:title="@string/tizen_settings">
 
         <SwitchPreference
             android:defaultValue="false"
@@ -70,13 +65,13 @@
         <PreferenceScreen
             android:title="@string/tizen_settings"
             android:dependency="tizenenable">
-        </PreferenceScreen>
-    </PreferenceCategory>
+            <!--    settings to be defined for Tizen Watches (Samsung Galaxy watches)   -->
+            <PreferenceCategory
+                android:key="tizenplugin"
+                android:title="@string/tizen_settings">
 
-    <PreferenceCategory
-        android:key="wearwizard"
-        android:title="@string/wear_wizard_settings"
-        android:summary="@string/wear_wizard_settings_summary">
+            </PreferenceCategory>
+        </PreferenceScreen>
 
         <SwitchPreference
             android:defaultValue="false"
@@ -85,7 +80,7 @@
             android:title="@string/wearcontrol_title" />
 
             <PreferenceScreen
-                android:title="@string/advancedsettings_title"
+                android:title="@string/wear_wizard_settings"
                 android:dependency="wearcontrol">
 
                 <PreferenceCategory
@@ -133,4 +128,5 @@
             </PreferenceScreen>
 
     </PreferenceCategory>
+
 </PreferenceScreen>
