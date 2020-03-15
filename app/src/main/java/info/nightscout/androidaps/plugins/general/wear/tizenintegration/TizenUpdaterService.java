@@ -23,6 +23,9 @@ import com.samsung.android.sdk.accessory.SAAuthenticationToken;
 import com.samsung.android.sdk.accessory.SAPeerAgent;
 import com.samsung.android.sdk.accessory.SASocket;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -47,6 +50,7 @@ import info.nightscout.androidaps.plugins.general.wear.WearPlugin;
 
 import info.nightscout.androidaps.plugins.iob.iobCobCalculator.GlucoseStatus;
 import info.nightscout.androidaps.plugins.iob.iobCobCalculator.IobCobCalculatorPlugin;
+import info.nightscout.androidaps.plugins.pump.common.utils.ByteUtil;
 import info.nightscout.androidaps.plugins.treatments.Treatment;
 import info.nightscout.androidaps.plugins.treatments.TreatmentsPlugin;
 import info.nightscout.androidaps.utils.DecimalFormatter;
@@ -56,6 +60,9 @@ import info.nightscout.androidaps.utils.ToastUtils;
 import static android.app.Service.START_STICKY;
 
 public class TizenUpdaterService extends SAAgent {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(TizenUpdaterService.class);
+
     public static final String ACTION_RESEND = TizenUpdaterService.class.getName().concat(".Resend");
     public static final String ACTION_OPEN_SETTINGS = TizenUpdaterService.class.getName().concat(".OpenSettings");
     public static final String ACTION_SEND_STATUS = TizenUpdaterService.class.getName().concat(".SendStatus");
@@ -256,10 +263,14 @@ public class TizenUpdaterService extends SAAgent {
 
         @Override
         public void onError(int channelId, String errorMessage, int errorCode) {
+            LOGGER.info("ServieConnection: onError: [channelId=" + channelId + ", errorMessage=" + errorMessage + ", errorCode=" + errorCode);
         }
 
         @Override
         public void onReceive(int channelId, byte[] data) {
+
+            LOGGER.info("ServieConnection: onReceive: [channelId=" + channelId + ", mConnectionHandler(isNull)=" + (mConnectionHandler == null) + ", data=" + ByteUtil.getCompactString(data));
+
             if (mConnectionHandler == null) {
                 return;
             }
@@ -287,6 +298,8 @@ public class TizenUpdaterService extends SAAgent {
                 public void run() {
                     //Toast.makeText(getBaseContext(), R.string.ConnectionTerminateddMsg, Toast.LENGTH_SHORT).show();
                     // TODO
+                    LOGGER.info("ServieConnection: onServiceConnectionLost: [reason=" + reason);
+
                 }
             });
         }
@@ -312,8 +325,7 @@ public class TizenUpdaterService extends SAAgent {
                         sendStatus();
                     } else if (ACTION_SEND_BASALS.equals(action)) {
                         sendBasals();
-                    }
-                    else {
+                    } else {
                         sendData();
                     }
                 }
@@ -593,6 +605,28 @@ public class TizenUpdaterService extends SAAgent {
 //                executeTask(new SendToDataLayerThread(WEARABLE_DATA_PATH, googleApiClient), dataMap);
 //            }
 //        }
+
+        LOGGER.info("sendData: mConnectionHandler(isNull)=" + (mConnectionHandler == null));
+
+        if (mConnectionHandler == null) {
+            return;
+        }
+        Calendar calendar = new GregorianCalendar();
+        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy.MM.dd aa hh:mm:ss.SSS");
+        String timeStr = " " + dateFormat.format(calendar.getTime());
+        String strToUpdateUI = new String();
+        final String message = strToUpdateUI.concat(timeStr);
+        new Thread(new Runnable() {
+            public void run() {
+                try {
+                    mConnectionHandler.send(getServiceChannelId(0), message.getBytes());
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        }).start();
+
+        
     }
 
 
