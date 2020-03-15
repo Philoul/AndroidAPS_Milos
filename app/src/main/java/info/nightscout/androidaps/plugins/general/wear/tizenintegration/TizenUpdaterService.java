@@ -82,6 +82,7 @@ public class TizenUpdaterService extends SAAgent {
     public static final String ACTION_CANCELNOTIFICATION_REQUEST_PATH = "/nightscout_watch_cancelnotificationrequest";
 
     public static final String TIZEN_ENABLE = "tizenenable";
+    public static final String logPrefix = "Tizen::";
 
     boolean wear_integration = false;
     private Handler handler;
@@ -300,7 +301,7 @@ public class TizenUpdaterService extends SAAgent {
     public int onStartCommand(Intent intent, int flags, int startId) {
         String action = intent != null ? intent.getAction() : null;
 
-        // Log.d(TAG, logPrefix + "onStartCommand: " + action);
+        Log.d(TAG, logPrefix + "onStartCommand: " + action);
 
         if (wear_integration && SP.getBoolean(TIZEN_ENABLE, true)) {
             handler.post(() -> {
