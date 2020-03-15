@@ -202,8 +202,8 @@ public class WearPlugin extends PluginBase {
                 }
             }
 
-            /* Structure code added for Tizen Watch updater service
-            if (SP.getBoolean("tizenenable", true)) { // then starts WatchUpdaterService for Tizen watch if enable
+            /* Structure code added for Tizen Watch updater service */
+            if (SP.getBoolean(TizenUpdaterService.TIZEN_ENABLE, true)) { // then starts WatchUpdaterService for Tizen watch if enable
                 if (bgValue) {
                     ctx.startService(new Intent(ctx, TizenUpdaterService.class));
                 }
@@ -216,7 +216,7 @@ public class WearPlugin extends PluginBase {
                     ctx.startService(new Intent(ctx, TizenUpdaterService.class).setAction(TizenUpdaterService.ACTION_SEND_STATUS));
                 }
             }
-            */
+
         }
     }
 
