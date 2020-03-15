@@ -27,12 +27,12 @@
     ]>
 <resources>
 
-    <application name="HelloAccessoryProvider" >
+    <application name="info.nightscout.androidaps.MainApp" >
         <serviceProfile
             id="/sample/hello"
             name="helloaccessory"
             role="provider"
-            serviceImpl="com.samsung.android.sdk.accessory.example.helloaccessory.provider.ProviderService"
+            serviceImpl="info.nightscout.androidaps.plugins.general.wear.tizenintegration.TizenUpdaterService"
             version="1.0"
             serviceLimit="ANY"
             serviceTimeout="10">
