@@ -184,7 +184,7 @@ public class WearPlugin extends PluginBase {
 
         //Log.d(TAG, "WR: WearPlugin:sendDataToWatch (status=" + status + ",basals=" + basals + ",bgValue=" + bgValue + ")");
 
-        if (isEnabled(getType()) ) { // only start service when this plugin is enabled
+        if (isEnabled(getType())) { // only start service when this plugin is enabled
             if (SP.getBoolean("wearenable", true)) { // then starts WatchUpdaterService for Wear OS if enable
                 if (bgValue) {
                     ctx.startService(new Intent(ctx, WatchUpdaterService.class));
@@ -198,22 +198,6 @@ public class WearPlugin extends PluginBase {
                     ctx.startService(new Intent(ctx, WatchUpdaterService.class).setAction(WatchUpdaterService.ACTION_SEND_STATUS));
                 }
             }
-
-            /* Structure code added for Tizen Watch updater service */
-            if (SP.getBoolean(TizenUpdaterService.TIZEN_ENABLE, true)) { // then starts WatchUpdaterService for Tizen watch if enable
-                if (bgValue) {
-                    ctx.startService(new Intent(ctx, TizenUpdaterService.class));
-                }
-
-                if (basals) {
-                    ctx.startService(new Intent(ctx, TizenUpdaterService.class).setAction(TizenUpdaterService.ACTION_SEND_BASALS));
-                }
-
-                if (status) {
-                    ctx.startService(new Intent(ctx, TizenUpdaterService.class).setAction(TizenUpdaterService.ACTION_SEND_STATUS));
-                }
-            }
-
         }
     }
 
@@ -222,13 +206,6 @@ public class WearPlugin extends PluginBase {
             //Log.d(TAG, "WR: WearPlugin:resendDataToWatch");
             ctx.startService(new Intent(ctx, WatchUpdaterService.class).setAction(WatchUpdaterService.ACTION_RESEND));
         }
-
-        /* Structure code added for Tizen Watch updater service
-        if (SP.getBoolean("tizenenable", true)) { // if Wear OS is enable
-            //Log.d(TAG, "WR: WearPlugin:resendDataToWatch");
-            ctx.startService(new Intent(ctx, WatchUpdaterService.class).setAction(TizenUpdaterService.ACTION_RESEND));
-        }
-        */
     }
 
     void openSettings() {
@@ -236,12 +213,6 @@ public class WearPlugin extends PluginBase {
             //Log.d(TAG, "WR: WearPlugin:openSettings");
             ctx.startService(new Intent(ctx, WatchUpdaterService.class).setAction(WatchUpdaterService.ACTION_OPEN_SETTINGS));
         }
-        /* Structure code added for Tizen Watch updater service
-        if (SP.getBoolean("tizenenable", true)) { // if Tizen is enable
-            //Log.d(TAG, "WR: TizenPlugin:openSettings");
-            ctx.startService(new Intent(ctx, TizenUpdaterService.class).setAction(TizenUpdaterService.ACTION_OPEN_SETTINGS));
-        }
-         */
     }
 
     void requestNotificationCancel(String actionstring) {
@@ -253,16 +224,6 @@ public class WearPlugin extends PluginBase {
             intent.putExtra("actionstring", actionstring);
             ctx.startService(intent);
         }
-        /* Structure code added for Tizen Watch updater service
-        if (SP.getBoolean("tizenenable", true)) { // if Tizen is enable
-            //Log.d(TAG, "WR: TizenPlugin:requestNotificationCancel");
-
-            Intent intent = new Intent(ctx, TizenUpdaterService.class)
-                    .setAction(TizenUpdaterService.ACTION_CANCEL_NOTIFICATION);
-            intent.putExtra("actionstring", actionstring);
-            ctx.startService(intent);
-        }
-         */
     }
 
     public void requestActionConfirmation(String title, String message, String actionstring) {
@@ -273,15 +234,6 @@ public class WearPlugin extends PluginBase {
             intent.putExtra("actionstring", actionstring);
             ctx.startService(intent);
         }
-        /* Structure code added for Tizen Watch updater service
-        if (SP.getBoolean("tizenenable", true)) { // if Tizen is enable
-            Intent intent = new Intent(ctx, TizenUpdaterService.class).setAction(TizenUpdaterService.ACTION_SEND_ACTIONCONFIRMATIONREQUEST);
-            intent.putExtra("title", title);
-            intent.putExtra("message", message);
-            intent.putExtra("actionstring", actionstring);
-            ctx.startService(intent);
-        }
-         */
     }
 
     public void requestChangeConfirmation(String title, String message, String actionstring) {
@@ -292,15 +244,6 @@ public class WearPlugin extends PluginBase {
             intent.putExtra("actionstring", actionstring);
             ctx.startService(intent);
         }
-        /* Structure code added for Tizen Watch updater service
-        if (SP.getBoolean("tizenenable", true)) { // if Tizen is enable
-            Intent intent = new Intent(ctx, TizenUpdaterService.class).setAction(TizenUpdaterService.ACTION_SEND_CHANGECONFIRMATIONREQUEST);
-            intent.putExtra("title", title);
-            intent.putExtra("message", message);
-            intent.putExtra("actionstring", actionstring);
-            ctx.startService(intent);
-        }
-         */
     }
 
     public static void registerWatchUpdaterService(WatchUpdaterService wus) {
