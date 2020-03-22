@@ -74,9 +74,6 @@ public class WearPlugin extends PluginBase {
         if (watchUS != null && SP.getBoolean("wearenable", true)) {
             watchUS.setSettings();
         }
-        if (tizenUS != null && SP.getBoolean("tizenenable", true)) {
-            tizenUS.setSettings();
-        }
         super.onStart();
 
         disposable.add(RxBus.INSTANCE
@@ -313,14 +310,5 @@ public class WearPlugin extends PluginBase {
     public static void unRegisterWatchUpdaterService() {
         watchUS = null;
     }
-
-    public static void registerTizenUpdaterService(TizenUpdaterService tus) {
-        tizenUS = tus;
-    }
-
-    public static void unRegisterTizenUpdaterService() {
-        tizenUS = null;
-    }
-
 
 }
