@@ -27,7 +27,7 @@
     ]>
 <resources>
 
-    <application name="info.nightscout.androidaps.MainApp" >
+    <application name="aapsTizenProvider" >
         <serviceProfile
             id="/sample/hello"
             name="helloaccessory"
