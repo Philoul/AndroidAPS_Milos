@@ -2,6 +2,9 @@ package info.nightscout.androidaps.plugins.general.wear;
 
 import android.content.Context;
 import android.content.Intent;
+import android.util.Log;
+
+import com.samsung.android.sdk.accessory.SAAgentV2;
 
 import info.nightscout.androidaps.MainApp;
 import info.nightscout.androidaps.R;
@@ -35,7 +38,7 @@ import io.reactivex.schedulers.Schedulers;
 public class WearPlugin extends PluginBase {
 
     private static WatchUpdaterService watchUS;
-    private static TizenUpdaterService tizenUS;
+    private TizenUpdaterService tizenUS = null;
 
     private final Context ctx;
 
@@ -49,11 +52,9 @@ public class WearPlugin extends PluginBase {
     }
 
     public static WearPlugin initPlugin(Context ctx) {
-
         if (wearPlugin == null) {
             wearPlugin = new WearPlugin(ctx);
         }
-
         return wearPlugin;
     }
 
@@ -69,8 +70,24 @@ public class WearPlugin extends PluginBase {
         this.ctx = ctx;
     }
 
+    private SAAgentV2.RequestAgentCallback mAgentCallback = new SAAgentV2.RequestAgentCallback() {
+        @Override
+        public void onAgentAvailable(SAAgentV2 agent) {
+            Log.d(TAG, "Agent available");
+            tizenUS = (TizenUpdaterService)agent;
+        }
+
+        @Override
+        public void onError(int errorCode, String message) {
+            Log.e(TAG, "Agent initialization error: " + errorCode + ". ErrorMsg: " + message);
+        }
+    };
+
     @Override
     protected void onStart() {
+        Log.d(TAG, "requesting agent in onStart");
+        SAAgentV2.requestAgent(ctx, TizenUpdaterService.class.getName(), mAgentCallback);
+
         if (watchUS != null && SP.getBoolean("wearenable", true)) {
             watchUS.setSettings();
         }
@@ -177,6 +194,13 @@ public class WearPlugin extends PluginBase {
     @Override
     protected void onStop() {
         disposable.clear();
+
+        //clean up SAP connection
+        if (tizenUS != null) {
+            tizenUS.releaseAgent();
+            tizenUS = null;
+        }
+
         super.onStop();
     }
 

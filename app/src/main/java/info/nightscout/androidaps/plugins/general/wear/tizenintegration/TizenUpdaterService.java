@@ -1,107 +1,26 @@
 package info.nightscout.androidaps.plugins.general.wear.tizenintegration;
 
-import android.app.Notification;
-import android.app.NotificationChannel;
-import android.app.NotificationManager;
 import android.content.Context;
-import android.content.Intent;
 import android.os.Binder;
-import android.os.Build;
 import android.os.Handler;
-import android.os.HandlerThread;
 import android.os.IBinder;
 import android.util.Log;
+import android.widget.Toast;
 
-import com.google.android.gms.wearable.DataMap;
-import com.google.android.gms.wearable.PutDataMapRequest;
-import com.google.android.gms.wearable.PutDataRequest;
-import com.google.android.gms.wearable.Wearable;
 import com.samsung.android.sdk.SsdkUnsupportedException;
 import com.samsung.android.sdk.accessory.SA;
-import com.samsung.android.sdk.accessory.SAAgent;
 import com.samsung.android.sdk.accessory.SAAgentV2;
-import com.samsung.android.sdk.accessory.SAAuthenticationToken;
 import com.samsung.android.sdk.accessory.SAPeerAgent;
 import com.samsung.android.sdk.accessory.SASocket;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import java.io.IOException;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.GregorianCalendar;
-import java.util.List;
-
-import info.nightscout.androidaps.Config;
-import info.nightscout.androidaps.MainApp;
-import info.nightscout.androidaps.R;
-import info.nightscout.androidaps.data.IobTotal;
-import info.nightscout.androidaps.data.Profile;
-import info.nightscout.androidaps.db.BgReading;
-import info.nightscout.androidaps.db.DatabaseHelper;
-import info.nightscout.androidaps.db.TemporaryBasal;
-import info.nightscout.androidaps.interfaces.PluginType;
-import info.nightscout.androidaps.interfaces.TreatmentsInterface;
-import info.nightscout.androidaps.plugins.aps.loop.LoopPlugin;
-import info.nightscout.androidaps.plugins.configBuilder.ProfileFunctions;
-import info.nightscout.androidaps.plugins.general.nsclient.data.NSDeviceStatus;
-import info.nightscout.androidaps.plugins.general.wear.WearPlugin;
-
-import info.nightscout.androidaps.plugins.iob.iobCobCalculator.GlucoseStatus;
-import info.nightscout.androidaps.plugins.iob.iobCobCalculator.IobCobCalculatorPlugin;
-import info.nightscout.androidaps.plugins.pump.common.utils.ByteUtil;
-import info.nightscout.androidaps.plugins.treatments.Treatment;
-import info.nightscout.androidaps.plugins.treatments.TreatmentsPlugin;
-import info.nightscout.androidaps.utils.DecimalFormatter;
-import info.nightscout.androidaps.utils.SP;
-import info.nightscout.androidaps.utils.ToastUtils;
-
-import static android.app.Service.START_STICKY;
 
 public class TizenUpdaterService extends SAAgentV2 {
-
-    private static final Logger LOGGER = LoggerFactory.getLogger(TizenUpdaterService.class);
-
-    public static final String ACTION_RESEND = TizenUpdaterService.class.getName().concat(".Resend");
-    public static final String ACTION_OPEN_SETTINGS = TizenUpdaterService.class.getName().concat(".OpenSettings");
-    public static final String ACTION_SEND_STATUS = TizenUpdaterService.class.getName().concat(".SendStatus");
-    public static final String ACTION_SEND_BASALS = TizenUpdaterService.class.getName().concat(".SendBasals");
-    public static final String ACTION_SEND_BOLUSPROGRESS = TizenUpdaterService.class.getName().concat(".BolusProgress");
-    public static final String ACTION_SEND_ACTIONCONFIRMATIONREQUEST = TizenUpdaterService.class.getName().concat(".ActionConfirmationRequest");
-    public static final String ACTION_SEND_CHANGECONFIRMATIONREQUEST = TizenUpdaterService.class.getName().concat(".ChangeConfirmationRequest");
-    public static final String ACTION_CANCEL_NOTIFICATION = TizenUpdaterService.class.getName().concat(".CancelNotification");
-
-    // Draft, to be updated with Tizen library
-    public static final String WEARABLE_DATA_PATH = "/nightscout_watch_data";
-    public static final String WEARABLE_RESEND_PATH = "/nightscout_watch_data_resend";
-    private static final String WEARABLE_CANCELBOLUS_PATH = "/nightscout_watch_cancel_bolus";
-    public static final String WEARABLE_CONFIRM_ACTIONSTRING_PATH = "/nightscout_watch_confirmactionstring";
-    public static final String WEARABLE_INITIATE_ACTIONSTRING_PATH = "/nightscout_watch_initiateactionstring";
-
-    private static final String OPEN_SETTINGS_PATH = "/openwearsettings";
-    private static final String NEW_STATUS_PATH = "/sendstatustowear";
-    private static final String NEW_PREFERENCES_PATH = "/sendpreferencestowear";
-    public static final String BASAL_DATA_PATH = "/nightscout_watch_basal";
-    public static final String BOLUS_PROGRESS_PATH = "/nightscout_watch_bolusprogress";
-    public static final String ACTION_CONFIRMATION_REQUEST_PATH = "/nightscout_watch_actionconfirmationrequest";
-    public static final String ACTION_CHANGECONFIRMATION_REQUEST_PATH = "/nightscout_watch_changeconfirmationrequest";
-    public static final String ACTION_CANCELNOTIFICATION_REQUEST_PATH = "/nightscout_watch_cancelnotificationrequest";
-
-    public static final String TIZEN_ENABLE = "tizenenable";
-    public static final String logPrefix = "Tizen::";
-
-    boolean wear_integration = false;
-    private Handler handler;
-
-    private static final String TAG = "HelloAccessory(P)";
+    private static final String TAG = "TizenUpdaterService";
     private static final Class<ServiceConnection> SASOCKET_CLASS = ServiceConnection.class;
     private final IBinder mBinder = new LocalBinder();
     private ServiceConnection mConnectionHandler = null;
     private Context mContext;
-    Handler mHandler = new Handler();
-
 
     public TizenUpdaterService(Context context) {
         super(TAG, context, SASOCKET_CLASS);
@@ -141,7 +60,7 @@ public class TizenUpdaterService extends SAAgentV2 {
 
         @Override
         protected void onServiceConnectionLost(int reason) {
-            closeConnection();
+//            closeConnection();
         }
     }
 
@@ -155,17 +74,14 @@ public class TizenUpdaterService extends SAAgentV2 {
         findPeerAgents();
     }
 
-    public boolean sendData(final String data) {
-        boolean retvalue = false;
+    public void sendData(final String data) {
         if (mConnectionHandler != null) {
             try {
                 mConnectionHandler.send(getServiceChannelId(0), data.getBytes());
-                retvalue = true;
             } catch (IOException e) {
                 e.printStackTrace();
             }
         }
-        return retvalue;
     }
 
     public boolean closeConnection() {
@@ -197,5 +113,60 @@ public class TizenUpdaterService extends SAAgentV2 {
             return false;
         }
         return true;
+    }
+
+//    @Override
+//    protected void onFindPeerAgentsResponse(SAPeerAgent[] peerAgents, int result) {
+//        if ((result == SAAgentV2.PEER_AGENT_FOUND) && (peerAgents != null)) {
+//            for(SAPeerAgent peerAgent:peerAgents)
+//                requestServiceConnection(peerAgent);
+//        } else if (result == SAAgentV2.FINDPEER_DEVICE_NOT_CONNECTED) {
+//            Toast.makeText(getApplicationContext(), "FINDPEER_DEVICE_NOT_CONNECTED", Toast.LENGTH_LONG).show();
+//        } else if (result == SAAgentV2.FINDPEER_SERVICE_NOT_FOUND) {
+//            Toast.makeText(getApplicationContext(), "FINDPEER_SERVICE_NOT_FOUND", Toast.LENGTH_LONG).show();
+//        } else {
+//            Toast.makeText(getApplicationContext(), "NO_PEERS_FOUND", Toast.LENGTH_LONG).show();
+//        }
+//    }
+
+    @Override
+    protected void onServiceConnectionResponse(SAPeerAgent peerAgent, SASocket socket, int result) {
+        if (result == SAAgentV2.CONNECTION_SUCCESS) {
+            if(socket != null && peerAgent != null) {
+                this.mConnectionHandler = (ServiceConnection) socket;
+                Log.e(TAG, "connection to gear successful.");
+
+            }
+        } else if (result == SAAgentV2.CONNECTION_ALREADY_EXIST) {
+            Toast.makeText(mContext, "CONNECTION_ALREADY_EXIST", Toast.LENGTH_LONG).show();
+        } else if (result == SAAgentV2.CONNECTION_DUPLICATE_REQUEST) {
+            Toast.makeText(mContext, "CONNECTION_DUPLICATE_REQUEST", Toast.LENGTH_LONG).show();
+        } else {
+            Toast.makeText(mContext, "CONNECTIONG_FAILURE", Toast.LENGTH_LONG).show();
+        }
+    }
+
+//    @Override
+//    protected void onPeerAgentsUpdated(SAPeerAgent[] peerAgents, int result) {
+//        final SAPeerAgent[] peers = peerAgents;
+//        final int status = result;
+//        mHandler.post(() -> {
+//            if (peers != null) {
+//                if (status == SAAgentV2.PEER_AGENT_AVAILABLE) {
+//                    Toast.makeText(getApplicationContext(), "PEER_AGENT_AVAILABLE", Toast.LENGTH_LONG).show();
+//                } else {
+//                    Toast.makeText(getApplicationContext(), "PEER_AGENT_UNAVAILABLE", Toast.LENGTH_LONG).show();
+//                }
+//            }
+//        });
+//    }
+
+    @Override
+    protected void onServiceConnectionRequested(SAPeerAgent peerAgent) {
+        Log.d(TAG, "connection was requested");
+
+        if (peerAgent != null) {
+            acceptServiceConnectionRequest(peerAgent);
+        }
     }
 }
