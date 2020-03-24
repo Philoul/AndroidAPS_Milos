@@ -169,4 +169,10 @@ public class TizenUpdaterService extends SAAgentV2 {
             acceptServiceConnectionRequest(peerAgent);
         }
     }
+
+    public void resendData() {
+        // resend all history data to watch (it's for graph that contains 5 hours history for BG)
+
+    }
+
 }
