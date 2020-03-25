@@ -228,6 +228,7 @@ public class WearPlugin extends PluginBase {
             //Log.d(TAG, "WR: WearPlugin:resendDataToWatch");
             ctx.startService(new Intent(ctx, WatchUpdaterService.class).setAction(WatchUpdaterService.ACTION_RESEND));
         }
+
         if (SP.getBoolean("tizenenable", false)) { // if Tizen is enable
             //resendDataToWatch is registrered on EventPreferenceChange
             // Restart (if necessary) or Stop tizen Agent according to preference screen
@@ -235,9 +236,6 @@ public class WearPlugin extends PluginBase {
                 restartTizenAgent();
             // Here we will start resend action
 //            tizenUS.resendData();
-
-        } else {
-            stopTizenAgent();
         }
     }
 

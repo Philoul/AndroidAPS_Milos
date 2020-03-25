@@ -132,7 +132,7 @@ public class TizenUpdaterService extends SAAgentV2 {
     @Override
     protected void onServiceConnectionResponse(SAPeerAgent peerAgent, SASocket socket, int result) {
         if (result == SAAgentV2.CONNECTION_SUCCESS) {
-            if(socket != null && peerAgent != null) {
+            if (socket != null && peerAgent != null) {
                 this.mConnectionHandler = (ServiceConnection) socket;
                 Log.e(TAG, "connection to gear successful.");
 
