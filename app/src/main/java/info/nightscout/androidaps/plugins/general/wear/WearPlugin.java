@@ -85,12 +85,16 @@ public class WearPlugin extends PluginBase {
 
     @Override
     protected void onStart() {
-        Log.d(TAG, "requesting agent in onStart");
-        SAAgentV2.requestAgent(ctx, TizenUpdaterService.class.getName(), mAgentCallback);
 
         if (watchUS != null && SP.getBoolean("wearenable", true)) {
             watchUS.setSettings();
         }
+
+        if (SP.getBoolean("tizenenable", false)) {
+            Log.d(TAG, "requesting agent in onStart");
+            SAAgentV2.requestAgent(ctx, TizenUpdaterService.class.getName(), mAgentCallback);
+        }
+
         super.onStart();
 
         disposable.add(RxBus.INSTANCE
@@ -195,11 +199,7 @@ public class WearPlugin extends PluginBase {
     protected void onStop() {
         disposable.clear();
 
-        //clean up SAP connection
-        if (tizenUS != null) {
-            tizenUS.releaseAgent();
-            tizenUS = null;
-        }
+        stoptTizenAgent();
 
         super.onStop();
     }
@@ -229,6 +229,17 @@ public class WearPlugin extends PluginBase {
         if (SP.getBoolean("wearenable", true)) { // if Wear OS is enable
             //Log.d(TAG, "WR: WearPlugin:resendDataToWatch");
             ctx.startService(new Intent(ctx, WatchUpdaterService.class).setAction(WatchUpdaterService.ACTION_RESEND));
+        }
+        if (SP.getBoolean("tizenenable", false)) { // if Tizen is enable
+            //resendDataToWatch is registrered on EventPreferenceChange
+            // Restart (if necessary) or Stop tizen Agent according to preference screen
+            if (tizenUS == null)
+                restartTizenAgent();
+            // Here we will start resend action
+            tizenUS.resendData();
+
+        } else {
+            stoptTizenAgent();
         }
     }
 
@@ -267,6 +278,21 @@ public class WearPlugin extends PluginBase {
             intent.putExtra("message", message);
             intent.putExtra("actionstring", actionstring);
             ctx.startService(intent);
+        }
+    }
+
+    private void restartTizenAgent() {
+        if (tizenUS != null)
+            stoptTizenAgent();
+        SAAgentV2.requestAgent(ctx, TizenUpdaterService.class.getName(), mAgentCallback);
+    }
+
+    private void stoptTizenAgent() {
+        // Clean up connections
+        if (tizenUS != null) {
+            tizenUS.closeConnection();
+            tizenUS.releaseAgent();
+            tizenUS = null;
         }
     }
 
