@@ -74,7 +74,7 @@ public class WearPlugin extends PluginBase {
         @Override
         public void onAgentAvailable(SAAgentV2 agent) {
             Log.d(TAG, "Agent available");
-            tizenUS = (TizenUpdaterService)agent;
+            tizenUS = (TizenUpdaterService) agent;
         }
 
         @Override
@@ -86,7 +86,7 @@ public class WearPlugin extends PluginBase {
     @Override
     protected void onStart() {
 
-        if (watchUS != null && SP.getBoolean("wearenable", true)) {
+        if (watchUS != null && SP.getBoolean("wearenable", false)) {
             watchUS.setSettings();
         }
 
@@ -198,18 +198,16 @@ public class WearPlugin extends PluginBase {
     @Override
     protected void onStop() {
         disposable.clear();
-
-        stoptTizenAgent();
-
+        stopTizenAgent();
         super.onStop();
     }
 
     private void sendDataToWatch(boolean status, boolean basals, boolean bgValue) {
 
-        //Log.d(TAG, "WR: WearPlugin:sendDataToWatch (status=" + status + ",basals=" + basals + ",bgValue=" + bgValue + ")");
+        Log.d(TAG, "WR: WearPlugin:sendDataToWatch (status=" + status + ",basals=" + basals + ",bgValue=" + bgValue + ")");
 
         if (isEnabled(getType())) { // only start service when this plugin is enabled
-            if (SP.getBoolean("wearenable", true)) { // then starts WatchUpdaterService for Wear OS if enable
+            if (SP.getBoolean("wearenable", false)) { // then starts WatchUpdaterService for Wear OS if enable
                 if (bgValue) {
                     ctx.startService(new Intent(ctx, WatchUpdaterService.class));
                 }
@@ -226,7 +224,7 @@ public class WearPlugin extends PluginBase {
     }
 
     void resendDataToWatch() {
-        if (SP.getBoolean("wearenable", true)) { // if Wear OS is enable
+        if (SP.getBoolean("wearenable", false)) { // if Wear OS is enable
             //Log.d(TAG, "WR: WearPlugin:resendDataToWatch");
             ctx.startService(new Intent(ctx, WatchUpdaterService.class).setAction(WatchUpdaterService.ACTION_RESEND));
         }
@@ -236,22 +234,22 @@ public class WearPlugin extends PluginBase {
             if (tizenUS == null)
                 restartTizenAgent();
             // Here we will start resend action
-            tizenUS.resendData();
+//            tizenUS.resendData();
 
         } else {
-            stoptTizenAgent();
+            stopTizenAgent();
         }
     }
 
     void openSettings() {
-        if (SP.getBoolean("wearenable", true)) { // if Wear OS is enable
+        if (SP.getBoolean("wearenable", false)) { // if Wear OS is enable
             //Log.d(TAG, "WR: WearPlugin:openSettings");
             ctx.startService(new Intent(ctx, WatchUpdaterService.class).setAction(WatchUpdaterService.ACTION_OPEN_SETTINGS));
         }
     }
 
     void requestNotificationCancel(String actionstring) {
-        if (SP.getBoolean("wearenable", true)) { // if Wear OS is enable
+        if (SP.getBoolean("wearenable", false)) { // if Wear OS is enable
             //Log.d(TAG, "WR: WearPlugin:requestNotificationCancel");
 
             Intent intent = new Intent(ctx, WatchUpdaterService.class)
@@ -262,7 +260,7 @@ public class WearPlugin extends PluginBase {
     }
 
     public void requestActionConfirmation(String title, String message, String actionstring) {
-        if (SP.getBoolean("wearenable", true)) { // if Wear OS is enable
+        if (SP.getBoolean("wearenable", false)) { // if Wear OS is enable
             Intent intent = new Intent(ctx, WatchUpdaterService.class).setAction(WatchUpdaterService.ACTION_SEND_ACTIONCONFIRMATIONREQUEST);
             intent.putExtra("title", title);
             intent.putExtra("message", message);
@@ -272,7 +270,7 @@ public class WearPlugin extends PluginBase {
     }
 
     public void requestChangeConfirmation(String title, String message, String actionstring) {
-        if (SP.getBoolean("wearenable", true)) { // if Wear OS is enable
+        if (SP.getBoolean("wearenable", false)) { // if Wear OS is enable
             Intent intent = new Intent(ctx, WatchUpdaterService.class).setAction(WatchUpdaterService.ACTION_SEND_CHANGECONFIRMATIONREQUEST);
             intent.putExtra("title", title);
             intent.putExtra("message", message);
@@ -282,12 +280,13 @@ public class WearPlugin extends PluginBase {
     }
 
     private void restartTizenAgent() {
-        if (tizenUS != null)
-            stoptTizenAgent();
+        if (tizenUS != null) {
+            stopTizenAgent();
+        }
         SAAgentV2.requestAgent(ctx, TizenUpdaterService.class.getName(), mAgentCallback);
     }
 
-    private void stoptTizenAgent() {
+    private void stopTizenAgent() {
         // Clean up connections
         if (tizenUS != null) {
             tizenUS.closeConnection();
