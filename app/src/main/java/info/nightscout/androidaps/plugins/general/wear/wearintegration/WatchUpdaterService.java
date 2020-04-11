@@ -124,7 +124,7 @@ public class WatchUpdaterService extends WearableListenerService implements Goog
     }
 
     private boolean wearIntegration() {
-        return wearPlugin.isEnabled(PluginType.GENERAL);
+        return wearPlugin.isEnabled(PluginType.GENERAL) && sp.getBoolean("wearenable", true);
     }
 
     private void googleApiConnect() {
