@@ -57,11 +57,13 @@ class WearPlugin @Inject constructor(
 
     private val disposable = CompositeDisposable()
     override fun onStart() {
+        /* Todo Code disable, should be inside TizenUpdaterService in tizenApiConnect function
         if (sp.getBoolean(TizenUpdaterService.TIZEN_ENABLE, false)) {
             // Bind service
             mIsBound = mainApp.bindService(Intent(mainApp, TizenUpdaterService::class.java), mConnection, Context.BIND_AUTO_CREATE)
             //Toast.makeText(mainApp, "Launch Tizen callback on Startup", Toast.LENGTH_LONG).show()
         }
+         */
         super.onStart()
         disposable.add(rxBus
             .toObservable(EventOpenAPSUpdateGui::class.java)
@@ -159,8 +161,8 @@ class WearPlugin @Inject constructor(
 
     override fun onStop() {
         disposable.clear()
-        // Un-bind service
-        mainApp.unbindService(mConnection)
+        //Todo disabled Check code in "onDestroy" function of TizenUpdaterService
+        // mainApp.unbindService(mConnection)
         super.onStop()
     }
 
@@ -185,8 +187,9 @@ class WearPlugin @Inject constructor(
     }
 
     fun resendDataToWatch() {
-        //if preference changed, Start or Stop Tizen communication
         mainApp.startService(Intent(mainApp, WatchUpdaterService::class.java).setAction(WatchUpdaterService.ACTION_RESEND))
+/* Todo code disabled (it was for activate or desactivate TizenUpdaterService according to settings, should be managed inside TizenUpdaterService
+        //if preference changed, Start or Stop Tizen communication
         if (sp.getBoolean(TizenUpdaterService.TIZEN_ENABLE, false) ) {
             if (!mIsBound) {
                 //Toast.makeText(mainApp, "Launch Tizen callback", Toast.LENGTH_LONG).show()
@@ -198,6 +201,7 @@ class WearPlugin @Inject constructor(
         } else {
             if (mIsBound == true && tizenUS != null) { tizenUS!!.closeConnection() }
         }
+        */
         mainApp.startService(Intent(mainApp, TizenUpdaterService::class.java).setAction(TizenUpdaterService.ACTION_RESEND))
     }
 
@@ -247,17 +251,20 @@ class WearPlugin @Inject constructor(
         mainApp.startService(intent2)
     }
 
+/* Todo : code disabled, should be in TizenUpdaterService (inside or called by tizenApiConnect function)
     private val mConnection: ServiceConnection = object : ServiceConnection {
         override fun onServiceConnected(className: ComponentName, service: IBinder) {
             tizenUS = (service as TizenUpdaterService.LocalBinder).getService()
             //Toast.makeText(mainApp, "Try to find peers", Toast.LENGTH_LONG).show()
             //tizenUS!!.findPeers()
         }
-
         override fun onServiceDisconnected(className: ComponentName) {
             tizenUS = null
             mIsBound = false
             Toast.makeText(mainApp, "Service disconnected", Toast.LENGTH_LONG).show()
         }
     }
+
+ */
+
 }

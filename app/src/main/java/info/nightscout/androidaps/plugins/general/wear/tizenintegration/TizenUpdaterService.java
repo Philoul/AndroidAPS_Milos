@@ -132,6 +132,9 @@ public class TizenUpdaterService extends SAAgent {
     @Override
     public void onCreate() {
         super.onCreate();
+        if (tizenIntegration()) {
+            tizenApiConnect();
+        }
 
         SA mAccessory = new SA();
         try {
@@ -153,6 +156,9 @@ public class TizenUpdaterService extends SAAgent {
 
     @Override
     public void onDestroy() {
+        if (mConnectionHandler != null && mConnectionHandler.isConnected()) {
+            mConnectionHandler=null; //todo: I'm not sure if it's enough or if it's closed cleanly
+        }
         super.onDestroy();
     }
 
@@ -293,15 +299,14 @@ public class TizenUpdaterService extends SAAgent {
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
         String action = intent != null ? intent.getAction() : null;
-
-        if (mConnectionHandler != null) {
-            if (mConnectionHandler.isConnected()) {
-                sendTizen(TIZEN_SENDSTATUS_CH,"Hello from AAPS");
-            } else {
-                findPeers();
-            }
+        if (mConnectionHandler != null && !mConnectionHandler.isConnected() /* && !googleApiClient.isConnecting() */ ) { //todo, don't know if there is an equivalent of isConnecting
+            tizenApiConnect();
         }
-/*
+        if (tizenIntegration()) {
+            sendTizen(TIZEN_SENDSTATUS_CH, "Hello from AAPS");
+        }
+
+/* todo : once communication is validated replace above code with code below
         if (tizenIntegration()) {
             handler.post(() -> {
                 if (mConnectionHandler.isConnected()) {
@@ -336,18 +341,33 @@ public class TizenUpdaterService extends SAAgent {
                 }
             });
         }
-
  */
-
         return Service.START_STICKY;
     }
 
-/*
-    // code below is for data exchange and integration as close as possible than Wearintegration plugin
+    private void tizenApiConnect() {
+        /*Todo: All code for starting SAP service should be included or called from function below (WearOS code left for example...)
+        //See code below use to connect to WearOS Watches, need the equivalent for Tizen Watches
+        if (googleApiClient != null && (googleApiClient.isConnected() || googleApiClient.isConnecting())) {
+            googleApiClient.disconnect();
+        }
+        googleApiClient = new GoogleApiClient.Builder(this).addConnectionCallbacks(this)
+                .addOnConnectionFailedListener(this).addApi(Wearable.API).build();
+        Wearable.MessageApi.addListener(googleApiClient, this);
+        if (googleApiClient.isConnected()) {
+            aapsLogger.debug(LTag.WEAR, "API client is connected");
+        } else {
+            // Log.d("WatchUpdater", logPrefix + "API client is not connected and is trying to connect");
+            googleApiClient.connect();
+        }
+        */
+    }
 
     private boolean tizenIntegration() {
         return wearPlugin.isEnabled(PluginType.GENERAL) && sp.getBoolean(TIZEN_ENABLE, true) && mConnectionHandler!= null ;
     }
+
+    // code below is for data exchange and integration as close as possible than Wearintegration plugin
 
     private void cancelBolus() {
         activePlugin.getActivePump().stopBolusDelivering();
@@ -360,10 +380,13 @@ public class TizenUpdaterService extends SAAgent {
         if (lastBG != null) {
             GlucoseStatus glucoseStatus = new GlucoseStatus(injector).getGlucoseStatusData();
 
+            if (mConnectionHandler != null && !mConnectionHandler.isConnected() /* && !googleApiClient.isConnecting() */ ) {
+                tizenApiConnect();
+            }
             if (tizenIntegration()) {
 
                 final JSONObject dataMap = dataMapSingleBG(lastBG, glucoseStatus);
-                if (dataMap == null) { // todo: correct line below
+                if (dataMap == null) { // correct line below
                     //ToastUtils.showToastInUiThread(this, resourceHelper.gs(R.string.noprofile));
                     return;
                 }
@@ -459,6 +482,9 @@ public class TizenUpdaterService extends SAAgent {
     }
 
     public void resendData() {
+        if (mConnectionHandler != null && !mConnectionHandler.isConnected() /* && !googleApiClient.isConnecting() */ ) {
+            tizenApiConnect();
+        }
         long startTime = System.currentTimeMillis() - (long) (60000 * 60 * 5.5);
         BgReading last_bg = iobCobCalculatorPlugin.lastBg();
 
@@ -499,6 +525,10 @@ public class TizenUpdaterService extends SAAgent {
     }
 
     public void sendBasals() {
+        if (mConnectionHandler != null && !mConnectionHandler.isConnected() /* && !googleApiClient.isConnecting() */ ) {
+            tizenApiConnect();
+        }
+
         long now = System.currentTimeMillis();
         final long startTimeWindow = now - (long) (60000 * 60 * 5.5);
 
@@ -704,6 +734,10 @@ public class TizenUpdaterService extends SAAgent {
     }
 
     public void sendNotification() {
+        if (mConnectionHandler != null && !mConnectionHandler.isConnected() /* && !googleApiClient.isConnecting() */ ) {
+            tizenApiConnect();
+        }
+
         try {
             JSONObject dataMap = new JSONObject();
             dataMap.put("timestamp", System.currentTimeMillis());
@@ -722,6 +756,10 @@ public class TizenUpdaterService extends SAAgent {
     }
 
     public void sendBolusProgress(int progresspercent, String status) {
+        if (mConnectionHandler != null && !mConnectionHandler.isConnected() /* && !googleApiClient.isConnecting() */ ) {
+            tizenApiConnect();
+        }
+
         try {
             JSONObject dataMap = new JSONObject();
             dataMap.put("timestamp", System.currentTimeMillis());
@@ -741,6 +779,10 @@ public class TizenUpdaterService extends SAAgent {
     }
 
     public void sendActionConfirmationRequest(String title, String message, String actionstring) {
+        if (mConnectionHandler != null && !mConnectionHandler.isConnected() /* && !googleApiClient.isConnecting() */ ) {
+            tizenApiConnect();
+        }
+
         try {
             JSONObject dataMap = new JSONObject();
             dataMap.put("timestamp", System.currentTimeMillis());
@@ -763,6 +805,10 @@ public class TizenUpdaterService extends SAAgent {
     }
 
     public void sendChangeConfirmationRequest(String title, String message, String actionstring) {
+        if (mConnectionHandler != null && !mConnectionHandler.isConnected() /* && !googleApiClient.isConnecting() */ ) {
+            tizenApiConnect();
+        }
+
         try {
             JSONObject dataMap = new JSONObject();
             dataMap.put("timestamp", System.currentTimeMillis());
@@ -785,6 +831,10 @@ public class TizenUpdaterService extends SAAgent {
     }
 
     public void sendCancelNotificationRequest(String actionstring) {
+        if (mConnectionHandler != null && !mConnectionHandler.isConnected() /* && !googleApiClient.isConnecting() */ ) {
+            tizenApiConnect();
+        }
+
         try {
             JSONObject dataMap = new JSONObject();
             dataMap.put("timestamp", System.currentTimeMillis());
@@ -805,6 +855,10 @@ public class TizenUpdaterService extends SAAgent {
     }
 
     public void sendStatus() {
+        if (mConnectionHandler != null && !mConnectionHandler.isConnected() /* && !googleApiClient.isConnecting() */ ) {
+            tizenApiConnect();
+        }
+
         try {
             JSONObject dataMap = new JSONObject();
             Profile profile = profileFunction.getProfile();
@@ -873,6 +927,10 @@ public class TizenUpdaterService extends SAAgent {
         }
     }
     private void sendPreferences() {
+        if (mConnectionHandler != null && !mConnectionHandler.isConnected() /* && !googleApiClient.isConnecting() */ ) {
+            tizenApiConnect();
+        }
+
         try {
             JSONObject dataMap = new JSONObject();
             //boolean wearcontrol = sp.getBoolean("wearcontrol", false);
@@ -952,7 +1010,7 @@ public class TizenUpdaterService extends SAAgent {
         }
         return basalStringResult;
     }
-*/
+
     public static boolean shouldReportLoopStatus(boolean enabled) {
         return (lastLoopStatus != enabled);
     }
