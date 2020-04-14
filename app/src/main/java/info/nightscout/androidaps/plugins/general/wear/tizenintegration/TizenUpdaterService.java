@@ -173,7 +173,7 @@ public class TizenUpdaterService extends SAAgent {
 
     @Override
     protected void onServiceConnectionRequested(SAPeerAgent peerAgent) {
-        if (peerAgent != null && sp.getBoolean(TIZEN_ENABLE, false)) {
+        if (peerAgent != null) {
             acceptServiceConnectionRequest(peerAgent);
         }
     }
@@ -385,6 +385,22 @@ public class TizenUpdaterService extends SAAgent {
     private void tizenApiConnect() {
 
         findPeers();
+
+        /*Todo: All code for starting SAP service should be included or called from function below (WearOS code left for example...)
+        //See code below use to connect to WearOS Watches, need the equivalent for Tizen Watches
+        if (googleApiClient != null && (googleApiClient.isConnected() || googleApiClient.isConnecting())) {
+            googleApiClient.disconnect();
+        }
+        googleApiClient = new GoogleApiClient.Builder(this).addConnectionCallbacks(this)
+                .addOnConnectionFailedListener(this).addApi(Wearable.API).build();
+        Wearable.MessageApi.addListener(googleApiClient, this);
+        if (googleApiClient.isConnected()) {
+            aapsLogger.debug(LTag.WEAR, "API client is connected");
+        } else {
+            // Log.d("WatchUpdater", logPrefix + "API client is not connected and is trying to connect");
+            googleApiClient.connect();
+        }
+        */
     }
 
 
@@ -399,6 +415,8 @@ public class TizenUpdaterService extends SAAgent {
         return wearPlugin.isEnabled(PluginType.GENERAL) && sp.getBoolean(TIZEN_ENABLE, true) && mConnectionHandler!= null ;
     }
 
+    // code below is for data exchange and integration as close as possible than Wearintegration plugin
+
     private void cancelBolus() {
         activePlugin.getActivePump().stopBolusDelivering();
     }
@@ -409,7 +427,10 @@ public class TizenUpdaterService extends SAAgent {
         // Log.d(TAG, logPrefix + "LastBg=" + lastBG);
         if (lastBG != null) {
             GlucoseStatus glucoseStatus = new GlucoseStatus(injector).getGlucoseStatusData();
-
+            //todo check if block below works after TizenApiConnect updated
+            if (mConnectionHandler != null && !mConnectionHandler.isConnected() ) {
+                tizenApiConnect();
+            }
             if (tizenIntegration()) {
 
                 final JSONObject dataMap = dataMapSingleBG(lastBG, glucoseStatus);
