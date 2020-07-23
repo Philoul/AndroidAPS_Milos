@@ -115,7 +115,6 @@ class AutotuneIob(
     //nsTreatment is used only for export data
     private fun initializeTempBasalData(from: Long, to: Long) {
         val temp = MainApp.getDbHelper().getTemporaryBasalsDataFromTime(from - range(), to, false)
-        tempBasals.reset().add(temp)
         //first keep only valid data
         //log.debug("D/AutotunePlugin Start inisalize Tempbasal from: " + dateUtil.dateAndTimeAndSecondsString(from) + " number of entries:" + temp.size());
         run {
@@ -125,6 +124,7 @@ class AutotuneIob(
                 i++
             }
         }
+        val temp2: MutableList<TemporaryBasal> = ArrayList()
         //log.debug("D/AutotunePlugin after cleaning number of entries:" + temp.size());
         //Then add neutral TBR if start of next TBR is after the end of previous one
         var previousend = temp[temp.size - 1].date + temp[temp.size - 1].realDuration * 60 * 1000
@@ -133,6 +133,7 @@ class AutotuneIob(
             //log.debug("D/AutotunePlugin previous end: " + dateUtil.dateAndTimeAndSecondsString(previousend) + " new entry start:" + dateUtil.dateAndTimeAndSecondsString(tb.date) + " new entry duration:" + tb.getRealDuration() + " test:" + (tb.date < previousend + 60 * 1000));
             if (tb.date < previousend + 60 * 1000) {                         // 1 min is minimum duration for TBR
                 nsTreatments.add(NsTreatment(tb))
+                temp2.add(0,tb)
                 previousend = tb.date + tb.realDuration * 60 * 1000
             } else {
                 var minutesToFill = (tb.date - previousend).toInt() / (60 * 1000)
@@ -149,6 +150,7 @@ class AutotuneIob(
                         minutesToFill = 0
                         previousend += minutesToFill * 60 * 1000.toLong()
                         nsTreatments.add(NsTreatment(neutralTbr))
+                        temp2.add(0,neutralTbr)
                         //log.debug("D/AutotunePlugin fill neutral start: " + dateUtil.dateAndTimeAndSecondsString(neutralTbr.date) + " duration:" + neutralTbr.durationInMinutes + " absolute:" + neutralTbr.absoluteRate);
                     } else {  //fill data until the end of current hour
                         val minutesFilled = 60 - Profile.secondsFromMidnight(previousend) / 60 % 60
@@ -162,13 +164,17 @@ class AutotuneIob(
                         minutesToFill -= minutesFilled
                         previousend = MidnightTime.calc(previousend) + (Profile.secondsFromMidnight(previousend) / 3600 + 1) * 3600 * 1000L //previousend is updated at the beginning of next hour
                         nsTreatments.add(NsTreatment(neutralTbr))
+                        temp2.add(0,neutralTbr)
                         //log.debug("D/AutotunePlugin fill neutral start: " + dateUtil.dateAndTimeAndSecondsString(neutralTbr.date) + " duration:" + neutralTbr.durationInMinutes + " absolute:" + neutralTbr.absoluteRate);
                     }
                 }
                 nsTreatments.add(NsTreatment(tb))
+                temp2.add(0, tb)
                 previousend = tb.date + tb.realDuration * 60 * 1000
             }
         }
+        Collections.sort(temp2) { o1: TemporaryBasal, o2: TemporaryBasal -> (o2.date - o1.date).toInt() }
+        tempBasals.reset().add(temp2)
     }
 
     //nsTreatment is used only for export data
@@ -181,18 +187,12 @@ class AutotuneIob(
         }
     }
 
-    /** */
-    fun calculateFromTreatmentsAndTempsSynchronized(time: Long): IobTotal {
-        //IobTotal iobTotal = iobCobCalculatorPluginHistory.calculateFromTreatmentsAndTempsSynchronized(time, profileFunction.getProfile(time)).round();
-        //return iobTotal;
-        return calculateFromTreatmentsAndTemps(time)
-    }
-
-    fun calculateFromTreatmentsAndTemps(time: Long): IobTotal {
+    fun getIOB(time: Long, currentBasal: Double): IobTotal {
         val bolusIob = getCalculationToTimeTreatments(time).round()
-        val basalIob = getCalculationToTimeTempBasals(time, true, endBG).round()
+        val basalIob = getCalculationToTimeTempBasals(time, true, endBG, currentBasal).round()
         return IobTotal.combine(bolusIob, basalIob).round()
     }
+
 
     fun getCalculationToTimeTreatments(time: Long): IobTotal {
         val total = IobTotal(time)
@@ -225,7 +225,7 @@ class AutotuneIob(
         return total
     }
 
-    fun getCalculationToTimeTempBasals(time: Long, truncate: Boolean, truncateTime: Long): IobTotal {
+    fun getCalculationToTimeTempBasals(time: Long, truncate: Boolean, truncateTime: Long, currentBasal: Double): IobTotal {
         val total = IobTotal(time)
         val pumpInterface = activePlugin!!.activePump
         for (pos in 0 until tempBasals.size()) {
@@ -237,7 +237,7 @@ class AutotuneIob(
                 val dummyTemp = TemporaryBasal(injector)
                 dummyTemp.copyFrom(t)
                 dummyTemp.cutEndTo(truncateTime)
-                dummyTemp.iobCalc(time, profile)
+                dummyTemp.iobCalc(time, profile, currentBasal)
             } else {
                 t.iobCalc(time, profile)
             }
@@ -255,9 +255,9 @@ class AutotuneIob(
                     val dummyExt = ExtendedBolus(injector)
                     dummyExt.copyFrom(e)
                     dummyExt.cutEndTo(truncateTime)
-                    dummyExt.iobCalc(time)
+                    dummyExt.iobCalc(time, profile, currentBasal)
                 } else {
-                    e.iobCalc(time)
+                    e.iobCalc(time, profile, currentBasal)
                 }
                 totalExt.plus(calc)
             }
