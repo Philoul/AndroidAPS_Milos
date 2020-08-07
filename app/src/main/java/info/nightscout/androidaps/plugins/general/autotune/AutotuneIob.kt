@@ -18,6 +18,7 @@ import info.nightscout.androidaps.plugins.treatments.TreatmentsPlugin
 import info.nightscout.androidaps.utils.DateUtil
 import info.nightscout.androidaps.utils.MidnightTime
 import info.nightscout.androidaps.utils.Round
+import info.nightscout.androidaps.utils.T
 import info.nightscout.androidaps.utils.resources.ResourceHelper
 import info.nightscout.androidaps.utils.sharedPreferences.SP
 import io.reactivex.disposables.CompositeDisposable
@@ -52,6 +53,7 @@ class AutotuneIob(
     var meals = ArrayList<Treatment>()
     var glucose: MutableList<BgReading> = ArrayList()
     private val tempBasals: Intervals<TemporaryBasal> = NonOverlappingIntervals()
+    private val tempBasals2: Intervals<TemporaryBasal> = NonOverlappingIntervals()
     private val extendedBoluses: Intervals<ExtendedBolus> = NonOverlappingIntervals()
     private val tempTargets: Intervals<TempTarget> = OverlappingIntervals()
     private val profiles = ProfileIntervals<ProfileSwitch>()
@@ -115,6 +117,8 @@ class AutotuneIob(
     //nsTreatment is used only for export data
     private fun initializeTempBasalData(from: Long, to: Long) {
         val temp = MainApp.getDbHelper().getTemporaryBasalsDataFromTime(from - range(), to, false)
+        // Initialize tempBasals according to TreatmentsPlugin
+        tempBasals.reset().add(temp)
         //first keep only valid data
         //log.debug("D/AutotunePlugin Start inisalize Tempbasal from: " + dateUtil.dateAndTimeAndSecondsString(from) + " number of entries:" + temp.size());
         run {
@@ -174,7 +178,8 @@ class AutotuneIob(
             }
         }
         Collections.sort(temp2) { o1: TemporaryBasal, o2: TemporaryBasal -> (o2.date - o1.date).toInt() }
-        tempBasals.reset().add(temp2)
+        // Initialize tempBasals with neutral TBR added
+        tempBasals2.reset().add(temp2)
     }
 
     //nsTreatment is used only for export data
@@ -189,7 +194,11 @@ class AutotuneIob(
 
     fun getIOB(time: Long, currentBasal: Double): IobTotal {
         val bolusIob = getCalculationToTimeTreatments(time).round()
-        val basalIob = getCalculationToTimeTempBasals(time, true, endBG, currentBasal).round()
+        // Calcul from IOBTotal corrected with currentBasal
+        val basalIob = getCalculationToTimeTempBasals(time, currentBasal).round()
+        // Calcul from specific tempBasals completed with neutral tbr
+        val basalIob2 = getCalculationToTimeTempBasals(time, true, endBG, currentBasal).round()
+        log.debug("D/AutotunePlugin: BolusIOB: " + bolusIob.iob + " CalculABS: " + basalIob.iob + " CalculSTD: " + basalIob2.iob)
         return IobTotal.combine(bolusIob, basalIob).round()
     }
 
@@ -228,8 +237,8 @@ class AutotuneIob(
     fun getCalculationToTimeTempBasals(time: Long, truncate: Boolean, truncateTime: Long, currentBasal: Double): IobTotal {
         val total = IobTotal(time)
         val pumpInterface = activePlugin!!.activePump
-        for (pos in 0 until tempBasals.size()) {
-            val t = tempBasals[pos]
+        for (pos in 0 until tempBasals2.size()) {
+            val t = tempBasals2[pos]
             if (t.date > time) continue
             var calc: IobTotal?
             val profile = profileFunction!!.getProfile(t.date) ?: continue
@@ -269,6 +278,45 @@ class AutotuneIob(
             total.plus(totalExt)
         }
         return total
+    }
+
+    // Copied from TreatmentPlugin getAbsoluteIOBTempBasals, and adapted with currentBasal calculated from AutotunePrep
+    fun getCalculationToTimeTempBasals(time: Long, currentBasal: Double): IobTotal {
+        val total = IobTotal(time)
+        var i = time - range()
+        while (i < time) {
+            val profile = profileFunction.getProfile(i)
+            val basal = profile!!.getBasal(i)
+            val runningTBR: TemporaryBasal? = getTempBasalFromHistory(i)
+            var running = basal
+            if (runningTBR != null) {
+                running = runningTBR.tempBasalConvertedToAbsolute(i, profile)
+            }
+            running -= currentBasal
+            val treatment = Treatment(injector)
+            treatment.date = i
+            treatment.insulin = running * 5.0 / 60.0 // 5 min chunk
+            val iob = treatment.iobCalc(i, profile.dia)
+            total.iob += iob.iobContrib
+            total.activity += iob.activityContrib
+            i += T.mins(5).msecs()
+        }
+        return total
+    }
+
+    fun getTempBasalFromHistory(time: Long): TemporaryBasal? {
+        val tb = getRealTempBasalFromHistory(time)
+        if (tb != null) return tb
+        val eb: ExtendedBolus? = getExtendedBolusFromHistory(time)
+        return if (eb != null && activePlugin.activePump.isFakingTempsByExtendedBoluses) TemporaryBasal(eb) else null
+    }
+
+    fun getRealTempBasalFromHistory(time: Long): TemporaryBasal? {
+        synchronized(tempBasals) { return tempBasals.getValueByInterval(time) }
+    }
+
+    fun getExtendedBolusFromHistory(time: Long): ExtendedBolus? {
+        synchronized(extendedBoluses) { return extendedBoluses.getValueByInterval(time) }
     }
 
     /** */
