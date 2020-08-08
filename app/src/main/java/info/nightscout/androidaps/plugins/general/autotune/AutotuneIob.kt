@@ -180,6 +180,7 @@ class AutotuneIob(
         Collections.sort(temp2) { o1: TemporaryBasal, o2: TemporaryBasal -> (o2.date - o1.date).toInt() }
         // Initialize tempBasals with neutral TBR added
         tempBasals2.reset().add(temp2)
+        log.debug("D/AutotunePlugin: tempBasal size: " + tempBasals.size() + " tempBasal2 size: " + tempBasals2.size())
     }
 
     //nsTreatment is used only for export data
@@ -196,9 +197,12 @@ class AutotuneIob(
         val bolusIob = getCalculationToTimeTreatments(time).round()
         // Calcul from IOBTotal corrected with currentBasal
         val basalIob = getCalculationToTimeTempBasals(time, currentBasal).round()
+ //       val absbasaliob = getCalculationToTimeTempBasals(time, 0.0).round()
+        val absbasaliob = test(time, 0.75)
+
         // Calcul from specific tempBasals completed with neutral tbr
         val basalIob2 = getCalculationToTimeTempBasals(time, true, endBG, currentBasal).round()
-        log.debug("D/AutotunePlugin: BolusIOB: " + bolusIob.iob + " CalculABS: " + basalIob.iob + " CalculSTD: " + basalIob2.iob)
+        log.debug("D/AutotunePlugin: CurrentBasal: " + currentBasal + " BolusIOB: " + bolusIob.iob + " " + bolusIob.basaliob + " CalculABS: " + basalIob.iob + "  " + basalIob.basaliob + " CalculSTD: "+ basalIob2.iob + " " + basalIob2.basaliob + " testAbs: " + absbasaliob.basaliob + " activity " + absbasaliob.activity)
         return IobTotal.combine(bolusIob, basalIob).round()
     }
 
@@ -297,7 +301,24 @@ class AutotuneIob(
             treatment.date = i
             treatment.insulin = running * 5.0 / 60.0 // 5 min chunk
             val iob = treatment.iobCalc(i, profile.dia)
-            total.iob += iob.iobContrib
+            total.basaliob += iob.iobContrib
+            total.activity += iob.activityContrib
+            i += T.mins(5).msecs()
+        }
+        return total
+    }
+
+    // Copied from TreatmentPlugin getAbsoluteIOBTempBasals, and adapted with currentBasal calculated from AutotunePrep
+    fun test(time: Long, currentBasal: Double): IobTotal {
+        val total = IobTotal(time)
+        var i = time - range()
+        while (i < time) {
+            var running = currentBasal
+            val treatment = Treatment(injector)
+            treatment.date = i
+            treatment.insulin = running * 5.0 / 60.0 // 5 min chunk
+            val iob = treatment.iobCalc(i, 7.0)
+            total.basaliob += iob.iobContrib
             total.activity += iob.activityContrib
             i += T.mins(5).msecs()
         }
