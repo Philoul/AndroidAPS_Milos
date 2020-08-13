@@ -202,7 +202,7 @@ class AutotuneIob(
 
         // Calcul from specific tempBasals completed with neutral tbr
         val basalIob2 = getCalculationToTimeTempBasals(time, true, endBG, currentBasal).round()
-        log.debug("D/AutotunePlugin: CurrentBasal: " + currentBasal + " BolusIOB: " + bolusIob.iob + " " + bolusIob.basaliob + " CalculABS: " + basalIob.iob + "  " + basalIob.basaliob + " CalculSTD: "+ basalIob2.iob + " " + basalIob2.basaliob + " testAbs: " + absbasaliob.basaliob + " activity " + absbasaliob.activity)
+        log.debug("D/AutotunePlugin: CurrentBasal: " + currentBasal + " BolusIOB: " + bolusIob.iob + " CalculABS: " + basalIob.basaliob + " CalculSTD: " + basalIob2.basaliob + " testAbs: " + absbasaliob.basaliob + " activity " + absbasaliob.activity)
         return IobTotal.combine(bolusIob, basalIob).round()
     }
 
@@ -300,7 +300,7 @@ class AutotuneIob(
             val treatment = Treatment(injector)
             treatment.date = i
             treatment.insulin = running * 5.0 / 60.0 // 5 min chunk
-            val iob = treatment.iobCalc(i, profile.dia)
+            val iob = treatment.iobCalc(time, profile.dia)
             total.basaliob += iob.iobContrib
             total.activity += iob.activityContrib
             i += T.mins(5).msecs()
@@ -317,7 +317,7 @@ class AutotuneIob(
             val treatment = Treatment(injector)
             treatment.date = i
             treatment.insulin = running * 5.0 / 60.0 // 5 min chunk
-            val iob = treatment.iobCalc(i, 7.0)
+            val iob = treatment.iobCalc(time, 7.0)
             total.basaliob += iob.iobContrib
             total.activity += iob.activityContrib
             i += T.mins(5).msecs()
