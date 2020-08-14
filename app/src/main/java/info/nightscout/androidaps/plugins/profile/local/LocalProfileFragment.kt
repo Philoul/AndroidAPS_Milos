@@ -197,6 +197,7 @@ class LocalProfileFragment : DaggerFragment() {
             TimeListEdit(context, aapsLogger, dateUtil, view, R.id.localprofile_isf, "ISF", resourceHelper.gs(R.string.isf_label) + ":", currentProfile.isf, null, 0.5, 500.0, 0.1, DecimalFormat("0.0"), save)
             basalView = TimeListEdit(context, aapsLogger, dateUtil, view, R.id.localprofile_basal, "BASAL", resourceHelper.gs(R.string.basal_label) + ": " + sumLabel(), currentProfile.basal, null, pumpDescription.basalMinimumRate, 10.0, 0.01, DecimalFormat("0.00"), save)
             TimeListEdit(context, aapsLogger, dateUtil, view, R.id.localprofile_target, "TARGET", resourceHelper.gs(R.string.target_label) + ":", currentProfile.targetLow, currentProfile.targetHigh, 3.0, 200.0, 0.1, DecimalFormat("0.0"), save)
+            build()
             updateGUI()
         }
 
